@@ -3,6 +3,8 @@ graphutils - a utility module containing our main graph class definiton some use
 '''
 
 import networkx as nx
+import random
+import string
 import time
 
 class Graph:
@@ -59,6 +61,75 @@ class Graph:
         return execution_time, distance, predecessor
 
     # What else is convenient / needed?
+
+class GraphGenerator:
+    def __init__(self, min_weight=1.0, max_weight=10.0, max_nodes=26):
+        if min_weight > max_weight:
+            raise ValueError("Minimum weight cannot be greater than maximum weight")
+        self.min_weight = min_weight
+        self.max_weight = max_weight
+        self.max_nodes = max_nodes
+
+    def _generate_node_name(self, index):
+        """
+        Generates a node name based on the index. For indices greater than 26,
+        it starts combining letters.
+        """
+        if index < 26:
+            return string.ascii_uppercase[index]
+        else:
+            return self._generate_node_name(index // 26 - 1) + self._generate_node_name(index % 26)
+
+    def generate_graph(self, num_nodes, num_edges):
+        """
+        Generates a graph with the specified number of nodes and edges.
+        """
+        if num_nodes > self.max_nodes:
+            raise ValueError("Number of nodes exceeds maximum allowed nodes.")
+
+        graph = Graph()
+
+        # Add nodes
+        for i in range(num_nodes):
+            node_name = self._generate_node_name(i)
+            graph.add_node(node_name)
+
+        # Add edges
+        all_possible_edges = [(u, v) for u in graph.graph.nodes for v in graph.graph.nodes if u != v]
+        random.shuffle(all_possible_edges)  # Shuffle to randomize edge selection
+
+        for _ in range(num_edges):
+            if not all_possible_edges:
+                break  # Break if there are no more possible edges to add
+            u, v = all_possible_edges.pop()
+            weight = random.uniform(self.min_weight, self.max_weight)
+            graph.add_edge(u, v, weight)
+
+        return graph
+
+    def generate_fully_connected_graph(self, num_nodes):
+        """
+        Generates a fully connected graph with the specified number of nodes.
+        Each pair of nodes will have edges in both directions with random weights.
+        """
+        if num_nodes > self.max_nodes:
+            raise ValueError("Number of nodes exceeds maximum allowed nodes.")
+
+        graph = Graph()
+
+        # Add nodes
+        for i in range(num_nodes):
+            node_name = self._generate_node_name(i)
+            graph.add_node(node_name)
+
+        # Add edges in both directions for each pair of nodes
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if i != j:
+                    weight = random.uniform(self.min_weight, self.max_weight)
+                    graph.add_edge(self._generate_node_name(i), self._generate_node_name(j), weight)
+
+        return graph
 
 if __name__ == '__main__':
     # Create a custom graph and add nodes and edges
