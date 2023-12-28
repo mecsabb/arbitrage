@@ -1,0 +1,67 @@
+{   
+    "graph" : {
+        "edges" : [
+            {
+                "node1" : 1234,
+                "node2" : 5678,
+                "edgeWeigth" : -538
+            },
+            {
+                "node1" : 3493,
+                "node2" : 3920,
+                "edgeWeigth" : 3992
+            }
+        ],
+        "nodes" : [
+            {
+                "id" : 1234,
+                "neighbours" : [
+                    1243,
+                    1323,
+                    5393
+                ]
+            },
+            {
+                "id" : 3493,
+                "neighbours" : [
+                    2331,
+                    3920,
+                    1093
+                ]
+            }
+        ]
+    },
+    "shortestPath" : {
+        "pathLength" : 39402,
+        "edges" : [
+            {
+                "node1" : 1234,
+                "node2" : 5678,
+                "edgeWeigth" : -538
+            },
+            {
+                "node1" : 3493,
+                "node2" : 3920,
+                "edgeWeigth" : 3992
+            }
+        ],
+        "nodes" : [
+            {
+                "id" : 1234,
+                "neighbours" : [
+                    1243,
+                    1323,
+                    5393
+                ]
+            },
+            {
+                "id" : 3493,
+                "neighbours" : [
+                    2331,
+                    3920,
+                    1093
+                ]
+            }
+        ]
+    }
+}
