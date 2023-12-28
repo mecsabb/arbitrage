@@ -13,15 +13,12 @@ def process_data():
     #get json graph from request
     graph = request.json
 
-    #find shortest path using model
-    path = shortest_path(graph) 
-
     #return path as json
-    return jsonify(path)
+    return jsonify(shortest_path(graph))
 
 @app.route('/evaluate-model')
 def score_model():
-    return get_model_score()
+    return jsonify(get_model_score())
 
 
 if __name__ == '__main__':
