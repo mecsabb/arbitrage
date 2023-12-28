@@ -14,7 +14,7 @@ def process_data():
     path = shortest_path(graph) 
 
     #return path as json
-    return jsonify(modified_data)
+    return jsonify(path)
 
 if __name__ == '__main__':
     app.run(debug=True)
