@@ -7,8 +7,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 class Game:
-    # Game object (named as conventionally MCTS interacts with games) wraps and manages our rl environment
-
+    """ Game object (named as conventionally MCTS interacts with games) wraps and manages our rl environment """
     def __init__(self, graph: Data, args=None):
         self.graph = graph
         self.args = args
@@ -62,7 +61,7 @@ class Game:
         else:
             raise ValueError("Invalid action")
         
-    def is_terminal(self):
+    def get_is_terminal(self):
         # Check if the environment is in a terminal state
         return self.is_terminal
 
@@ -75,9 +74,7 @@ class Game:
         # Return the weight of the edge
         return self.graph.edge_attr[edge_idx].item()
 
-    
     def render(self):
-
         # Convert PyG graph to NetworkX for visualization
         G = nx.DiGraph()
         for source, target in self.graph.edge_index.t().tolist():
@@ -89,7 +86,6 @@ class Game:
         nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, 'weight'))
         plt.title('Current State of the Graph')
         plt.show()
-
     
     def get_n_actions(self):
         return len(self.get_action_space())

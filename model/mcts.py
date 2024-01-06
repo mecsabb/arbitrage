@@ -1,5 +1,6 @@
 import numpy as np
 
+from typing import List
 import sys
 import os
 
@@ -9,40 +10,46 @@ from .model import GCN
 from .game import Game
 
 class MCTSNode:
-    def __init__(self, parent_edge, node):
-        self.edges = []
+    """Monte Carlo Tree Search Tree Node"""
+    def __init__(self, parent_edge, node, edges=None):
+        if edges is None:
+            self.edges: List[MCTSEdge] = []
+        else:
+            self.edges: List[MCTSEdge] = edges
+
         self.parent_edge: MCTSEdge = parent_edge
         self.node = node
         
         self.expanded = 0
         self.visits = 0
         
-        self.mu = 0
-        self.sigma = 0
+        self.mu = 0.0
+        self.sigma = 0.0
 
 
 class MCTSEdge:
+    """Monte Carlo Tree Search Tree Edge"""
     def __init__(self, p: float, parent: MCTSNode, next_: MCTSNode, reward: float):
         # Number of visits
-        self.N = 0
+        self.N: int = 0
         
         # Cumulative action value (sorta like reward)
-        self.W = 0
+        self.W = 0.0
         
         # Average action value
-        self.Q = 0
+        self.Q = 0.0
         
         # Probability
-        self.P = p
+        self.P: float = p
         
         # Parent MCTSNode
-        self.parent_node = parent
+        self.parent_node: MCTSNode = parent
         
         # Next MCTSNode
-        self.next = next_
+        self.next: MCTSNode = next_
         
         # Reward (i.e. edge weight)
-        self.r = reward
+        self.r: float = reward
 
 class MCTSConfig:
     def __init__(self, c_iter: int, c_puct=1.5, tau=1):
@@ -63,7 +70,7 @@ def backup(path, args):
 
 def mcts(config: MCTSConfig, game: Game, network: GCN):
     
-    root = MCTSNode()
+    root = MCTSNode(None, -1)
     n_actions = game.get_n_actions()
     
     for _ in range(config.c_iter*n_actions):
@@ -80,7 +87,7 @@ def mcts(config: MCTSConfig, game: Game, network: GCN):
                 break
 
         # --- EXPAND --- #
-        if not game.is_terminal():
+        if not game.is_terminal:
             # p and v are vectors with one value for each node in the Game's graph
             # - imagine we added an edge from the current node to each other node, and then made the p and v value for all 
             #   of these new edges 0.  We do this as the network requires a consistent output shape
@@ -113,7 +120,7 @@ def mcts(config: MCTSConfig, game: Game, network: GCN):
             node.expanded = True
         
         # --- BACKUP --- #
-        if game.is_terminal():
+        if game.is_terminal:
             # r_estim = 0 if s is a terminal state (from paper)
             r_estim = 0
         else:
@@ -133,7 +140,7 @@ def mcts(config: MCTSConfig, game: Game, network: GCN):
               
     # -- end loop --
     
-    policy = [0]*game.get_n_actions()
+    policy: List[float] = [0]*n_actions
     for i, a in enumerate(root.edges):
         policy[i] = pow(a.N/(root.visits-a.N), 1/config.tau)
     
