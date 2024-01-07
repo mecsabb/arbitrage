@@ -4,6 +4,7 @@ import App from './App.jsx'
 import './index.css'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import DisplayGraph from './DisplayGraph.jsx'
+import KrakenTest from './KrakenTest.jsx'
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
   {
     path: "display-graph",
     element: <DisplayGraph />,
+  },
+  {
+    path: "kraken-test",
+    element: <KrakenTest />,
   },
 ]);
 
