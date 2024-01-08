@@ -6,6 +6,7 @@ import networkx as nx
 import random
 import string
 import time
+from .kraken import get_asset_pairs, get_conversion, get_all_conversions, create_from_csv
 
 class Graph:
     def __init__(self):
@@ -61,6 +62,35 @@ class Graph:
         return execution_time, distance, predecessor
 
     # What else is convenient / needed?
+
+    def create_kraken_graph(self,conversions=None,csv_name=None):
+        """
+        Conversions is a list of dictionaries of the form {"curr1":X,"curr2":Y,"price":Z}.
+        csvName is an alternative argument to conversions. It is the name of a csv that holds the same
+            data as the list of dictionaries, in csv form.
+
+        The function can take a list of conversion prices between crypto currencies, and create a graph from them.
+        Alternatively, it can create the list of prices using the kraken api, and then create the graph from that.
+        """
+
+        if csvName is not None:
+            conversions = create_from_csv(csvName)
+
+        #calls the function to extract data from the kraken api. (Takes about 2 minutes)
+        elif conversions == None:
+            conversions = get_all_conversions()
+
+        for conversion in conversions:
+            curr1 = conversion["curr1"]
+            curr2 = conversion["curr2"]
+            price = conversion["price"]
+            self.add_node(curr1)
+            self.add_node(curr2)
+            self.add_edge(curr1,curr2,price)
+            #Not sure I can do this below, but this is to get the conversion in the opposite direction
+            if price != 0:
+                self.add_edge(curr2,curr1,1/price)        
+
 
 class GraphGenerator:
     def __init__(self, min_weight=1.0, max_weight=10.0, max_nodes=26):
@@ -130,6 +160,7 @@ class GraphGenerator:
                     graph.add_edge(self._generate_node_name(i), self._generate_node_name(j), weight)
 
         return graph
+
 
 if __name__ == '__main__':
     # Create a custom graph and add nodes and edges

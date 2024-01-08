@@ -3,11 +3,10 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 def shortest_path(graph):
-    return graph
+    pass
 
-def get_model_score(graph):
-    return graph
-
+def get_model_score():
+    pass
 @app.route('/process-graph', methods=['POST'])
 def process_data():
     #get json graph from request
