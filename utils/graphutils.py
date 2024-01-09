@@ -2,21 +2,24 @@
 graphutils - a utility module containing our main graph class definiton some useful functions
 '''
 
-import networkx as nx
+import torch
+from torch_geometric.data import Data
 import random
 import string
 import time
 
 class Graph:
     def __init__(self):
-        self.graph = nx.DiGraph()
-    
+        self.data = Data(x = None, edge_index = None, edge_attr = None)    
     def add_node(self, name):
         self.graph.add_node(name)
     
     def add_edge(self, u, v, weight=1):
         # u, v are nodes
-        self.graph.add_edge(u, v, weight=weight)
+        edge_index = torch.tensor([[u, v], [v, u]], dtype=torch.long)
+        edge_attr = torch.tensor([weight, weight], dtype=torch.float)  
+        self.data.edge_index = torch.cat([self.data.edge_index, edge_index], dim=1) if self.data.edge_index is not None else edge_index
+        self.data.edge_attr = torch.cat([self.data.edge_attr, edge_attr]) if self.data.edge_attr is not None else edge_attr
 
     def bellman_ford(self, source):
         """
@@ -95,7 +98,7 @@ class GraphGenerator:
             graph.add_node(node_name)
 
         # Add edges
-        all_possible_edges = [(u, v) for u in graph.graph.nodes for v in graph.graph.nodes if u != v]
+        all_possible_edges = [(u, v) for u in range(num_nodes) for v in range(num_nodes) if u != v]
         random.shuffle(all_possible_edges)  # Shuffle to randomize edge selection
 
         for _ in range(num_edges):
