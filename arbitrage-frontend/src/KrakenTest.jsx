@@ -48,7 +48,7 @@ const KrakenTest = () => {
     <>
       {/* Display tickers three-column layout */}
       <div>
-        <h2>Multiple Tickers Information:</h2>
+        <h2>Cryptocurrency Tickers:</h2>
         {tickerData.length > 0 ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', overflowY: 'scroll', maxHeight: '600px', scrollbarWidth: 'thin', scrollbarColor: '#ddd #fff' }}>
             {tickerData.map(({ name, lastPrice }, index) => (
