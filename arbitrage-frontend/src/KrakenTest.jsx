@@ -1,17 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // for making HTTP requests
+import axios from 'axios';
 
 const KrakenTest = () => {
-  const [tickerData, setTickerData] = useState(null); // Initial value is null
+  const [tickerData, setTickerData] = useState([]);
 
-  useEffect(() => { // Effect hook runs once on mount
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://api.kraken.com/0/public/Ticker?pair=XDGUSD'); // GET request to Kraken API
+        // Fetch tickers from Kraken
+        const response = await axios.get('https://api.kraken.com/0/public/Ticker?');
         const data = response.data;
 
-        if (data && data.result && data.result['XDGUSD']) { 
-          setTickerData(data.result['XDGUSD']); // Set tickerData state to response data
+        if (data && data.result) {
+          const tickersArray = Object.entries(data.result).map(([name, info]) => ({
+            name,
+            lastPrice: info.c[0],
+          }));
+          setTickerData(tickersArray);
+
+          // Format tickers into a graph structure
+          const graphData = {
+            graph: {
+              edges: [], // Add edges if needed
+              nodes: tickersArray.map(({ name }) => ({
+                id: name,
+                neighbours: [] // Add neighbours if needed
+              })),
+            },
+            shortestPath: null, // Set to null as this is not available in the Kraken API response
+          };
+
+          // Example: Post the formatted graph in JSON form to the Flask endpoint
+          console.log('Sending graph data:', graphData);
+          await axios.post('http://127.0.0.1:5000/process-graph', graphData);
         } else {
           console.error('Invalid response from Kraken API:', data);
         }
@@ -21,24 +42,28 @@ const KrakenTest = () => {
     };
 
     fetchData();
-  }, []); // Empty dependency array ensures the effect runs only once on mount
+  }, []);
 
   return (
     <>
+      {/* Display tickers three-column layout */}
       <div>
-        <h2>Dogecoin (XDG) Information:</h2>
-        {tickerData !== null ? (
-          <ul>
-            <li>{`Last Price: $${tickerData.c[0]}`}</li>
-            <li>{`24h High: $${tickerData.h[1]}`}</li>
-            <li>{`24h Low: $${tickerData.l[1]}`}</li>
-            <li>{`24h Volume: ${tickerData.v[1]}`}</li>
-          </ul>
+        <h2>Multiple Tickers Information:</h2>
+        {tickerData.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', overflowY: 'scroll', maxHeight: '600px', scrollbarWidth: 'thin', scrollbarColor: '#ddd #fff' }}>
+            {tickerData.map(({ name, lastPrice }, index) => (
+              <div key={index} style={{ border: '1px solid #ddd', padding: '20px', borderRadius: '8px', textAlign: 'center' }}>
+                <h3>{`Ticker: ${name}`}</h3>
+                <p>{`Last Price: $${lastPrice}`}</p>
+              </div>
+            ))}
+          </div>
         ) : (
           <p>Loading...</p>
         )}
       </div>
-      
+
+      {/* Return to Homepage button */}
       <button>
         <a href="/">Return to Homepage</a>
       </button>
