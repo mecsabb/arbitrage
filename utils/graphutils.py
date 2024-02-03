@@ -7,6 +7,10 @@ from torch_geometric.data import Data
 import random
 import string
 import time
+import torch_geometric
+import networkx as nx
+import matplotlib.pyplot as plt
+
 
 class Graph:
     def __init__(self):
@@ -155,3 +159,56 @@ if __name__ == '__main__':
 
     except Exception as e:
         print(f"An error occurred: {e}")
+
+
+
+def print_graph(G, pos, node_labels=None, edge_labels=None, highlighted_nodes=None):
+
+    # Clear the previous plot
+    plt.clf()
+
+    # Draw all nodes and edges
+    nx.draw(G, pos, node_size=700, font_size=8, font_color='black', font_weight='bold')
+
+    # Highlight specified nodes
+    if highlighted_nodes is not None:
+        nx.draw_networkx_nodes(G, pos, nodelist=highlighted_nodes, node_color='red', node_size=700)
+
+    # Add edge labels
+    if edge_labels is not None:
+        edge_labels_dict = {(u, v): label.item() for (u, v), label in zip(G.edges(), edge_labels)}
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels_dict)
+
+    # Add node labels
+    if node_labels is not None:
+        labels = {i: label for i, label in enumerate(node_labels)}
+        nx.draw_networkx_labels(G, pos, labels=labels)
+
+    # Plot graph 
+    plt.draw()
+    plt.pause(0.5)
+
+
+def visualize_example():
+
+    edge_index = torch.tensor([[0, 1, 1, 0, 1, 2, 2, 2, 3, 3, 4, 4, 5], 
+                               [1, 0, 3, 5, 2, 1, 3, 5, 2, 4, 3, 5, 4]], dtype=torch.long)  # Edgelist
+    edge_labels = torch.tensor([23.5,12.3,4,5,23,5,5,2,3,56,53,5,2,5,3,3], dtype=torch.float)  # Edge labels
+    x = torch.tensor([[-1], [0], [1], [2], [3], [4]], dtype=torch.float)  # Node features
+    y = torch.tensor([101, 102, 103, 104, 105, 106], dtype=torch.long)  # Graph labels
+
+    # Initialize the graph
+    data = torch_geometric.data.Data(x=x, edge_index=edge_index, edge_attr=edge_labels, y=y)
+    G = torch_geometric.utils.to_networkx(data, node_attrs=["x"], edge_attrs=["edge_attr"])
+    pos = nx.spring_layout(G)
+    
+    # Assuming path contains the sequence of visited nodes
+    path = [0, 1, 3,4, 5]
+
+    plt.ion()
+    
+    for i in range(len(path)):
+        print_graph(G, pos, node_labels=y.tolist(), edge_labels=edge_labels, highlighted_nodes=path[:i+1]) 
+
+    plt.ioff()
+    plt.show()
