@@ -2,11 +2,14 @@
 graphutils - a utility module containing our main graph class definiton some useful functions
 '''
 
+import requests
+import math
 import torch
 from torch_geometric.data import Data
 import random
 import string
 import time
+global dump
 
 class Graph:
     def __init__(self):
@@ -133,6 +136,58 @@ class GraphGenerator:
                     graph.add_edge(self._generate_node_name(i), self._generate_node_name(j), weight)
 
         return graph
+    
+    def generate_graph_from_kraken():
+        """
+        Fetches data from the Kraken API to create a graph and saves it to 
+        a PyG data object.
+        """
+        # Fetch data from Kraken API
+        resp = requests.get('https://api.kraken.com/0/public/Ticker')
+        dump = resp.json()
+
+        full_pairs = list(dump['result'].keys())
+        resp = requests.get('https://api.kraken.com/0/public/AssetPairs')
+        info_dump = resp.json()
+
+        pairs = []
+        for key in info_dump['result'].keys():
+            pairs.append(tuple(info_dump['result'][key]['wsname'].split('/')))
+
+        # Extract edge weights
+        edge_weights = {}
+        for pair in pairs:
+            edge_weights[pair] = float(math.log(float(dump['result'][pair[0] + pair[1]]['a'][0])))
+
+        # Create nodes and edges for the graph
+        nodes = set()
+        edges = []
+        for pair in pairs:
+            nodes.add(pair[0])
+            nodes.add(pair[1])
+            edges.append((pair[0], pair[1]))
+
+        # Convert nodes to indices
+        node_indices = {node: index for index, node in enumerate(nodes)}
+
+        # Create edge indices and weights
+        edge_indices = [(node_indices[edge[0]], node_indices[edge[1]]) for edge in edges]
+        edge_weights_list = [edge_weights[edge] for edge in edges]
+        edge_index = torch.tensor(edge_indices, dtype=torch.long).t().contiguous()
+        edge_attr = torch.tensor(edge_weights_list, dtype=torch.float).view(-1, 1)
+
+        # Create the PyG data object
+        x = torch.zeros(len(nodes), dtype=torch.float).view(-1, 1) 
+        y = torch.zeros(len(nodes), dtype=torch.float).view(-1, 1)  
+        data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
+
+        # Save the graph as a PyG data object
+        torch.save(data, 'kraken_graph.pt')
+
+        return data
+
+
+
 
 if __name__ == '__main__':
     # Create a custom graph and add nodes and edges
