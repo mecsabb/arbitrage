@@ -51,25 +51,32 @@ const KrakenTest = () => {
         const data = response.data;
 
         if (data && data.result) {
-          const pairsArray = Object.entries(data.result).map(([name, info]) => ({
-            pairName: info.wsname,
+          const pairsArray = Object.entries(data.result).map(info => ({
+            //pairName is a list of the form [base, destination]
+            pairName: info.wsname.split('/'),
             origin: info.base, 
 
           }));
 
           setPairData(pairsArray);
         
-        
         };
-
-
-
       } catch (error) {
         console.error('Error fetching pair data from Kraken', error);
       }
     }
+    
+    // UNFINISHED, function to create and format graph data to post to backend
+    const GraphData = () => {
+      //Need to post the tickerData and the pairsData to the backend in json format
+    }
+
+    
 
     fetchTickerData();
+    fetchPairData();
+
+
   }, []);
 
   return (
