@@ -3,9 +3,10 @@ import axios from 'axios';
 
 const KrakenTest = () => {
   const [tickerData, setTickerData] = useState([]);
+  const [pairData, setPairData] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchTickerData = async () => {
       try {
         // Fetch tickers from Kraken
         const response = await axios.get('https://api.kraken.com/0/public/Ticker?');
@@ -37,11 +38,38 @@ const KrakenTest = () => {
           console.error('Invalid response from Kraken API:', data);
         }
       } catch (error) {
-        console.error('Error fetching data from Kraken:', error);
+        console.error('Error fetching ticker data from Kraken:', error);
       }
     };
 
-    fetchData();
+    //fetchPairData method will get the asset pairs info. Since we will need to create the graph data with both ticker and 
+    // assetPair data, I'm thinking we'll want to remove the graphdata and post request from the fetchTickerData function, 
+    // and have it as it's own function that gets called after fetchTickerData and fetchPairdata
+    const fetchPairData = async () => {
+      try {
+        const response = await axios.get('https://api.kraken.com/0/public/AssetPairs?');
+        const data = response.data;
+
+        if (data && data.result) {
+          const pairsArray = Object.entries(data.result).map(([name, info]) => ({
+            pairName: info.wsname,
+            origin: info.base, 
+
+          }));
+
+          setPairData(pairsArray);
+        
+        
+        };
+
+
+
+      } catch (error) {
+        console.error('Error fetching pair data from Kraken', error);
+      }
+    }
+
+    fetchTickerData();
   }, []);
 
   return (
