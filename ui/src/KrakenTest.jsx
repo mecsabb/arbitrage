@@ -3,81 +3,87 @@ import axios from 'axios';
 
 const KrakenTest = () => {
   const [tickerData, setTickerData] = useState([]);
+  // const [tickerJson, setTickerJson] = useState([]);
   const [pairData, setPairData] = useState([]);
+  // const [pairJson, setPairJson] = useState([]);
 
-  useEffect(() => {
-    const fetchTickerData = async () => {
-      try {
-        // Fetch tickers from Kraken
-        const response = await axios.get('https://api.kraken.com/0/public/Ticker?');
-        const data = response.data;
+  const fetchTickerData = async () => {
+    try{
+      const response = await axios.get('https://api.kraken.com/0/public/Ticker?');
+      return response.data.result;
 
-        if (data && data.result) {
-          const tickersArray = Object.entries(data.result).map(([name, info]) => ({
-            name,
-            lastPrice: info.c[0],
-          }));
-          setTickerData(tickersArray);
+    } catch (error) {
+      console.error("error fetching ticker data from Kraken", error)
+      return null
+    }
+  }
 
-          // Format tickers into a graph structure
-          const graphData = {
-            graph: {
-              edges: [], // Add edges if needed
-              nodes: tickersArray.map(({ name }) => ({
-                id: name,
-                neighbours: [] // Add neighbours if needed
-              })),
-            },
-            shortestPath: null, // Set to null as this is not available in the Kraken API response
-          };
+  const fetchPairData = async () => {
+    try{
+      const response = await axios.get('https://api.kraken.com/0/public/AssetPairs?');
+      return response.data.result;
 
-          // Example: Post the formatted graph in JSON form to the Flask endpoint
-          console.log('Sending graph data:', graphData);
-          await axios.post('http://127.0.0.1:5000/process-graph', graphData);
-        } else {
-          console.error('Invalid response from Kraken API:', data);
-        }
-      } catch (error) {
-        console.error('Error fetching ticker data from Kraken:', error);
-      }
+    } catch (error) {
+      console.error("error fetching ticker data from Kraken", error)
+      return null
+    }
+  }
+
+  const postCombinedData = async (tickerJson, pairJson) => {
+    
+    //combinedData is json containing all of both the ticker and assetPair data. 
+    // **NOTE: pairJson is quite large, and a lot of it is unecessary data, consider dropping some before posting!!**
+    // if any further data modification has to happen before the post, it can be done here
+    const combinedData = {
+      tickerJson, 
+      pairJson
     };
-
-    //fetchPairData method will get the asset pairs info. Since we will need to create the graph data with both ticker and 
-    // assetPair data, I'm thinking we'll want to remove the graphdata and post request from the fetchTickerData function, 
-    // and have it as it's own function that gets called after fetchTickerData and fetchPairdata
-    const fetchPairData = async () => {
-      try {
-        const response = await axios.get('https://api.kraken.com/0/public/AssetPairs?');
-        const data = response.data;
-
-        if (data && data.result) {
-          const pairsArray = Object.entries(data.result).map(info => ({
-            //pairName is a list of the form [base, destination]
-            pairName: info.wsname.split('/'),
-            origin: info.base, 
-
-          }));
-
-          setPairData(pairsArray);
-        
-        };
-      } catch (error) {
-        console.error('Error fetching pair data from Kraken', error);
-      }
-    }
+    try{
+      // **UPDATE ENDPOINT WHEN USING/TESTING** 
+      console.log("posting combined data: ", combinedData);
+      const response = await axios.post('http://127.0.0.1:5000/process-graph', combinedData);
     
-    // UNFINISHED, function to create and format graph data to post to backend
-    const GraphData = () => {
-      //Need to post the tickerData and the pairsData to the backend in json format
-    }
-
     
+    } catch(error) {
+      console.error("error posting to backend", error);
+    }
+  }
 
-    fetchTickerData();
-    fetchPairData();
+  const processData = async () => {
+    try {
+      // Will wait until both fetches are complete
+      const [tickerJson, pairJson] = await Promise.all([fetchTickerData(), fetchPairData()]);
+  
+      const tickersArray = Object.entries(tickerJson).map(([name, info]) => ({
+        name,
+        lastPrice: info.c[0],
+      }));
+      setTickerData(tickersArray);
 
+      const pairsArray = Object.entries(pairJson).map(([name, info]) => ({
+        pairName: info.wsname.split('/'),
+        origin: info.base, 
+      }));
+      setPairData(pairsArray);
 
-  }, []);
+      // Here I believe the response will be the output of the model, i.e. the shortest path in some sort of representation
+      // TO-DO: write code to handle the response, put into graph format and display
+      const response = await postCombinedData(tickerJson, pairJson);
+      return response;
+
+    } catch (error) {
+      console.error("error processing data", error);
+      return null;
+    }
+  }
+
+  // Since processData() calls both fetches, recieves them, processes them, and calls the post function, it's the only function
+  // we need to call in the useEffect. Empty dependency array => will run on render, if we want it to wait until a button is pressed or something
+  // like that we'll need to update this.
+  useEffect(() => {
+    processData();
+  }, [])
+
 
   return (
     <>
