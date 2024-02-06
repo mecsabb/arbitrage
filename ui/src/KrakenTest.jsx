@@ -3,9 +3,8 @@ import axios from 'axios';
 
 const KrakenTest = () => {
   const [tickerData, setTickerData] = useState([]);
-  // const [tickerJson, setTickerJson] = useState([]);
   const [pairData, setPairData] = useState([]);
-  // const [pairJson, setPairJson] = useState([]);
+  const [graphJson, setGraphJson] = useState();
 
   const fetchTickerData = async () => {
     try{
@@ -49,6 +48,34 @@ const KrakenTest = () => {
     }
   }
 
+  // THIS IS UNFINISHED AND ISN'T CALLED ANYWHERE YET, CALL IT IN PROCESS DATA AND THEN CALL SETGRAPHJSON() 
+  // MAKE THIS GO DIRECTLY TO D3.JS FORMAT
+  const createGraphData = () => {
+    const graphData = {};
+
+    pairData.forEach(pair => {
+      const node = pair.origin;
+      const target = pair.pairName[1];
+      const jointName = pair.name;
+
+      // If the node hasn't been added yet, add it and initialize with an empty list
+      if(!graphData[node]){
+        graphData[node] = []
+      }
+
+      //NOTE: if not found, it will return 'undefined'
+      const edgeWeight = tickerData.find(ticker => ticker.name === jointName)?.lastPrice;
+      
+      //Thus, it only gets added if an actual value is returned
+      if(edgeWeight){
+        graphData[node].push([target, edgeWeight]);
+      }
+    });
+
+    return graphData;
+
+  }
+
   const processData = async () => {
     try {
       // Will wait until both fetches are complete
@@ -61,10 +88,12 @@ const KrakenTest = () => {
       setTickerData(tickersArray);
 
       const pairsArray = Object.entries(pairJson).map(([name, info]) => ({
+        name,
         pairName: info.wsname.split('/'),
         origin: info.base, 
       }));
       setPairData(pairsArray);
+ 
 
       // Here I believe the response will be the output of the model, i.e. the shortest path in some sort of representation
       // TO-DO: write code to handle the response, put into graph format and display
@@ -85,6 +114,7 @@ const KrakenTest = () => {
   }, [])
 
 
+
   return (
     <>
       {/* Display tickers three-column layout */}
@@ -103,6 +133,8 @@ const KrakenTest = () => {
           <p>Loading...</p>
         )}
       </div>
+
+
 
       {/* Return to Homepage button */}
       <button>

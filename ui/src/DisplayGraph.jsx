@@ -3,8 +3,9 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
+// TO-DO: Add mouseover functionality to edges, so the actual edge weight appears when you hover on it, check: https://d3-graph-gallery.com/interactivity.html
 
-const DisplayGraph = () => {
+const DisplayGraph = ({graphData}) => {
   const graphContainerRef = useRef(null);
 
   useEffect(() => {
