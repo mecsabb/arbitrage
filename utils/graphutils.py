@@ -11,7 +11,6 @@ import torch_geometric
 import networkx as nx
 import matplotlib.pyplot as plt
 
-
 class Graph:
     def __init__(self):
         self.data = Data(x = None, edge_index = None, edge_attr = None)    
@@ -161,7 +160,6 @@ if __name__ == '__main__':
         print(f"An error occurred: {e}")
 
 
-
 def print_graph(G, pos, node_labels=None, edge_labels=None, highlighted_nodes=None):
 
     # Clear the previous plot
@@ -189,7 +187,7 @@ def print_graph(G, pos, node_labels=None, edge_labels=None, highlighted_nodes=No
     plt.pause(0.5)
 
 
-def visualize_example():
+def print_graph_example():
 
     edge_index = torch.tensor([[0, 1, 1, 0, 1, 2, 2, 2, 3, 3, 4, 4, 5], 
                                [1, 0, 3, 5, 2, 1, 3, 5, 2, 4, 3, 5, 4]], dtype=torch.long)  # Edgelist
@@ -212,3 +210,4 @@ def visualize_example():
 
     plt.ioff()
     plt.show()
+
