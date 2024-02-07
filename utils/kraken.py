@@ -16,6 +16,7 @@ def get_conversion(curr1: str,curr2: str,fee = 0.26):
         print(f"An error occurred with curency {curr1}{curr2}: {str(e)}")
         return -1
 
+
 def get_asset_pairs():
     """
     Returns a list of all possible currency conversions (believe only in one direction), 
@@ -29,6 +30,7 @@ def get_asset_pairs():
         currencies = json['result'][pair]['wsname'].split('/')
         pairs.append(currencies)
     return pairs
+
 
 def get_all_conversions():
     """
@@ -44,11 +46,14 @@ def get_all_conversions():
         conversions.append({"curr1":pair[0],"curr2":pair[1],"price":price})
     return conversions
 
+
 def save_to_csv(name, conversions: list):
+
     df = pd.DataFrame.from_records(conversions)
-    
     df.to_csv(name, index=False)
 
+
 def create_from_csv(name):
+
     df = pd.read_csv(name)
     return df.to_dict('records')
