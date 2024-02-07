@@ -7,6 +7,7 @@ import DisplayGraph from './DisplayGraph.jsx'
 // 2) Improve the hover labelling, make it so you don't have to hover for like 5 seconds before it shows up
 // 3) Add edge highlighting and edgeWeight display on hover over edges
 // 4) Potentially remove ticker info now that it's redundant
+// 5) Write conditions to not include nodes that only have one edge (They can't be in the cycle anyways)
 
 const KrakenTest = () => {
   const [tickerData, setTickerData] = useState([]);
@@ -58,47 +59,49 @@ const KrakenTest = () => {
 
 
   const createGraphData = () => {
-    const nodes = [];
-    const links = [];
+    let nodes = [];
+    let links = [];
     const nodesMap = {};
     let nodeID = 1;
 
     pairData.forEach(pair => {
       const node = pair.origin;
       const destination = pair.pairName[1];
-
-      if(!nodesMap[node]){
-        nodesMap[node] = nodeID;
-        nodes.push({id: nodeID, label: node})
-        nodeID++;
+      
+      //Won't add USD or EUR as a node
+      if(node != "USD" && node != "EUR" && destination != "USD" && destination != "EUR"){
+        if(!nodesMap[node]){
+          nodesMap[node] = nodeID;
+          nodes.push({id: nodeID, label: node})
+          nodeID++;
+        }
+  
+        if(!nodesMap[destination]){
+          nodesMap[destination] = nodeID;
+          nodes.push({id: nodeID, label: destination})
+          nodeID++;
+        }
       }
-
-      if(!nodesMap[destination]){
-        nodesMap[destination] = nodeID;
-        nodes.push({id: nodeID, label: destination})
-        nodeID++;
-      }
-
     });
 
     pairData.forEach(pair => {
-      const sourceId = nodesMap[pair.origin];
-      const targetId = nodesMap[pair.pairName[1]];
-      const jointName = pair.name;
-      const edgeWeight = tickerData.find(ticker => ticker.name === jointName)?.lastPrice;
-
-      // if it doesn't find the edgeweight it will return undefined, and this will not run
-      if(edgeWeight){
-        links.push({source: sourceId, target: targetId, weight: edgeWeight});
+      //Won't add any links of nodes that weren't added to the nodeMap (i.e. won't add any links containing USD or EUR)
+      if(nodesMap[pair.origin] && nodesMap[pair.pairName[1]]){
+        const sourceId = nodesMap[pair.origin];
+        const targetId = nodesMap[pair.pairName[1]];
+        const jointName = pair.name;
+        const edgeWeight = tickerData.find(ticker => ticker.name === jointName)?.lastPrice;
+  
+        // if it doesn't find the edgeweight it will return undefined, and this will not run
+        if(edgeWeight){
+          links.push({source: sourceId, target: targetId, weight: edgeWeight});
+        }
       }
-
-    })
-
-    console.log("links and nodes: ", links, nodes);
+      
+    });
+    
     setLinksObject(links);
     setNodesObject(nodes);
-
-
   }
 
   const processData = async () => {
@@ -143,6 +146,7 @@ const KrakenTest = () => {
     if(tickerData.length > 0 && pairData.length > 0){
       createGraphData();
     }
+    console.log("links obj, ", linksObject);
   }, [tickerData, pairData]);
 
 

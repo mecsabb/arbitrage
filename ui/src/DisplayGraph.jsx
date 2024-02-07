@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import './DisplayGraphStyles.css';
 
 const DisplayGraph = ({ nodes, links }) => {
   const graphContainerRef = useRef(null);
@@ -27,6 +28,10 @@ const DisplayGraph = ({ nodes, links }) => {
 
     const g = svg.append('g'); // Append a 'g' element to the SVG for graphical elements
 
+    const tooltip = d3.select(graphContainerRef.current)
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
     // Define the simulation
     const simulation = d3.forceSimulation(nodes)
@@ -41,31 +46,70 @@ const DisplayGraph = ({ nodes, links }) => {
       .attr("stroke", "black")
       .attr("stroke-width", 2);
 
-    // Create the nodes
-  const node = g.selectAll("circle")
-  .data(nodes)
-  .enter().append("circle")
-  .attr("r", 5)
-  .attr("fill", "red")
-  .call(d3.drag()
-    .on("start", dragstarted)
-    .on("drag", dragged)
-    .on("end", dragended))
-  .on("mouseover", function(event, d) {
-    d3.select(this)
-      .transition()
-      .duration(300)
-      .attr("r", 10); // increases radius on mousehover
-  })
-  .on("mouseout", function(event, d) {
-    d3.select(this)
-      .transition()
-      .duration(300)
-      .attr("r", 5); // Revert the radius when mouseout
-  });
 
-  node.append("title")
-  .text(d => d.label); 
+    // Create the nodes
+    const node = g.selectAll("circle")
+      .data(nodes)
+      .enter().append("circle")
+      .attr("r", 5)
+      .attr("fill", "red")
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended))
+      .on("mouseover", function(event, d) {
+        d3.select(this)
+          .transition()
+          .duration(300)
+          .attr("r", 10); // increases radius on mousehover
+        tooltip.transition()
+          .duration(100) // makes it appear faster
+          .style("opacity", 1); // make it fully visible
+        tooltip.html(`${d.label}`)
+          .style("left", (event.pageX) + "px")
+          .style("top", (event.pageY - 28) + "px");
+    })
+      .on("mouseout", function(event, d) {
+        d3.select(this)
+          .transition()
+          .duration(300)
+          .attr("r", 5); // Revert the radius when mouseout
+        tooltip.transition()
+          .duration(300)
+          .style("opacity", 0); // fades out
+    });
+
+    node.append("title")
+    .text(d => d.label);
+
+
+
+
+    link.on("mouseover", function(event, d) {
+      d3.select(this)
+          .attr("stroke", "yellow") // Change color to yellow on mouse over
+          .transition()
+          .duration(300)
+          .attr("stroke-width", 5);
+      tooltip.transition()
+        .duration(100) // makes it appear faster
+        .style("opacity", 1); // make it fully visible
+      tooltip.html(`${d.source.label} to ${d.target.label} exchange rate: ${d.weight}`)
+        .style("left", (event.pageX) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+      .on("mouseout", function(event, d) {
+        d3.select(this)
+          .attr("stroke", "black") // Revert to original color on mouse out
+          .transition()
+          .duration(300)
+          .attr("stroke-width", 2);
+        tooltip.transition()
+          .duration(300)
+          .style("opacity", 0); // fades out
+    });
+
+
 
 
     // Add tick event listener to update positions
