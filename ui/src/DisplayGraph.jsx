@@ -79,8 +79,7 @@ const DisplayGraph = ({ nodes, links }) => {
           .style("opacity", 0); // fades out
     });
 
-    node.append("title")
-    .text(d => d.label);
+
 
 
 
