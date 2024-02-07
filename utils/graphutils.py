@@ -8,6 +8,8 @@ import string
 import time
 from .kraken import get_asset_pairs, get_conversion, get_all_conversions, create_from_csv
 
+#test
+
 class Graph:
     def __init__(self):
         self.graph = nx.DiGraph()
