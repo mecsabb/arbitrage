@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import DisplayGraph from './DisplayGraph.jsx'
+
+//TO-DOS: 
+// 1) Make the background colour of the fetch kraken example different than the div colour for ease of scrolling
+// 2) Improve the hover labelling, make it so you don't have to hover for like 5 seconds before it shows up
+// 3) Add edge highlighting and edgeWeight display on hover over edges
+// 4) Potentially remove ticker info now that it's redundant
 
 const KrakenTest = () => {
   const [tickerData, setTickerData] = useState([]);
   const [pairData, setPairData] = useState([]);
-  const [graphJson, setGraphJson] = useState();
+  const [linksObject, setLinksObject] = useState([]);
+  const [nodesObject, setNodesObject] = useState([]);
 
   const fetchTickerData = async () => {
     try{
@@ -48,31 +56,48 @@ const KrakenTest = () => {
     }
   }
 
-  // THIS IS UNFINISHED AND ISN'T CALLED ANYWHERE YET, CALL IT IN PROCESS DATA AND THEN CALL SETGRAPHJSON() 
-  // MAKE THIS GO DIRECTLY TO D3.JS FORMAT
+
   const createGraphData = () => {
-    const graphData = {};
+    const nodes = [];
+    const links = [];
+    const nodesMap = {};
+    let nodeID = 1;
 
     pairData.forEach(pair => {
       const node = pair.origin;
-      const target = pair.pairName[1];
-      const jointName = pair.name;
+      const destination = pair.pairName[1];
 
-      // If the node hasn't been added yet, add it and initialize with an empty list
-      if(!graphData[node]){
-        graphData[node] = []
+      if(!nodesMap[node]){
+        nodesMap[node] = nodeID;
+        nodes.push({id: nodeID, label: node})
+        nodeID++;
       }
 
-      //NOTE: if not found, it will return 'undefined'
-      const edgeWeight = tickerData.find(ticker => ticker.name === jointName)?.lastPrice;
-      
-      //Thus, it only gets added if an actual value is returned
-      if(edgeWeight){
-        graphData[node].push([target, edgeWeight]);
+      if(!nodesMap[destination]){
+        nodesMap[destination] = nodeID;
+        nodes.push({id: nodeID, label: destination})
+        nodeID++;
       }
+
     });
 
-    return graphData;
+    pairData.forEach(pair => {
+      const sourceId = nodesMap[pair.origin];
+      const targetId = nodesMap[pair.pairName[1]];
+      const jointName = pair.name;
+      const edgeWeight = tickerData.find(ticker => ticker.name === jointName)?.lastPrice;
+
+      // if it doesn't find the edgeweight it will return undefined, and this will not run
+      if(edgeWeight){
+        links.push({source: sourceId, target: targetId, weight: edgeWeight});
+      }
+
+    })
+
+    console.log("links and nodes: ", links, nodes);
+    setLinksObject(links);
+    setNodesObject(nodes);
+
 
   }
 
@@ -80,7 +105,7 @@ const KrakenTest = () => {
     try {
       // Will wait until both fetches are complete
       const [tickerJson, pairJson] = await Promise.all([fetchTickerData(), fetchPairData()]);
-  
+
       const tickersArray = Object.entries(tickerJson).map(([name, info]) => ({
         name,
         lastPrice: info.c[0],
@@ -93,12 +118,13 @@ const KrakenTest = () => {
         origin: info.base, 
       }));
       setPairData(pairsArray);
- 
-
+      
+      //CURRENTLY COMMENTED OUT THE FOLLOWING CODE FOR TESTING OF THE GRAPH REPRESENTATION ON FRONTEND, THIS CODE WOULD POST THE INFO TO THE BACKEND
       // Here I believe the response will be the output of the model, i.e. the shortest path in some sort of representation
       // TO-DO: write code to handle the response, put into graph format and display
-      const response = await postCombinedData(tickerJson, pairJson);
-      return response;
+
+      //const response = await postCombinedData(tickerJson, pairJson);
+      // return response;
 
     } catch (error) {
       console.error("error processing data", error);
@@ -111,7 +137,13 @@ const KrakenTest = () => {
   // like that we'll need to update this.
   useEffect(() => {
     processData();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if(tickerData.length > 0 && pairData.length > 0){
+      createGraphData();
+    }
+  }, [tickerData, pairData]);
 
 
 
@@ -134,7 +166,17 @@ const KrakenTest = () => {
         )}
       </div>
 
+      <div>
+          <h2>Graph Representation</h2>
+            {(linksObject.length > 0 && nodesObject.length > 0) ? (
+              
+              <DisplayGraph nodes={nodesObject} links={linksObject}></DisplayGraph>
 
+            ) : (
+              <p>Loading...</p>
+            )}
+
+      </div>
 
       {/* Return to Homepage button */}
       <button>

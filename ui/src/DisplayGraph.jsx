@@ -1,120 +1,106 @@
-
-
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
-// TO-DO: Add mouseover functionality to edges, so the actual edge weight appears when you hover on it, check: https://d3-graph-gallery.com/interactivity.html
-
-const DisplayGraph = ({graphData}) => {
+const DisplayGraph = ({ nodes, links }) => {
   const graphContainerRef = useRef(null);
 
   useEffect(() => {
+    if (!graphContainerRef.current) return; // Ensure the ref is attached
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    const zoom = d3.zoom()
+      .scaleExtent([0.5, 4])
+      .on('zoom', (event) => {
+        g.attr('transform', event.transform); // Apply transformations to the 'g' element
+      });
+
     const svgContainer = d3.select(graphContainerRef.current);
+    svgContainer.selectAll("*").remove(); // Clear previous SVG to prevent duplication
 
-    // Cleanup function
-    const cleanup = () => {
-      svgContainer.selectAll("*").remove();
-      simulation.stop();
-    };
+    const svg = d3.select(graphContainerRef.current).append('svg')
+      .attr('width', width)
+      .attr('height', height)
+      .call(zoom) // Apply zoom behavior to the SVG element
+      .append('g'); // This is where you append your nodes and links
 
-    // Sample graph data
-    const nodes = [
-      { id: 1, label: 'Node 1' },
-      { id: 2, label: 'Node 2' },
-      { id: 3, label: 'Node 3' },
-      { id: 4, label: 'Node 4' },
-    ];
+    const g = svg.append('g'); // Append a 'g' element to the SVG for graphical elements
 
-    const links = [
-      { source: 1, target: 2, weight: 5 },
-      { source: 2, target: 3, weight: 8 },
-      { source: 3, target: 4, weight: 3 },
-      { source: 4, target: 1, weight: 7 },
-    ];
 
-    // Set up the simulation with custom force strengths
+    // Define the simulation
     const simulation = d3.forceSimulation(nodes)
-      .force('link', d3.forceLink(links).id(d => d.id).distance(150))
-      .force('charge', d3.forceManyBody().strength(-150))
-      .force('center', d3.forceCenter(200, 150));
+      .force('link', d3.forceLink(links).id(d => d.id).distance(100))
+      .force('charge', d3.forceManyBody().strength(-300))
+      .force('center', d3.forceCenter(width / 2, height / 2)); // Center based on dynamic dimensions
 
-    // Create SVG container
-    svgContainer.selectAll("*").remove(); // Clear existing content
-    const svg = svgContainer
-      .append("svg")
-      .attr("width", 400)
-      .attr("height", 300);
-
-    // Create links
-    const link = svg.selectAll("line")
+    // Create the links
+    const link = g.selectAll("line")
       .data(links)
-      .enter()
-      .append("line")
+      .enter().append("line")
       .attr("stroke", "black")
-      .attr("stroke-width", d => d.weight);
+      .attr("stroke-width", 2);
 
-    // Create nodes
-    const node = svg.selectAll("g")
-      .data(nodes)
-      .enter()
-      .append("g")
-      .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended)
-      );
+    // Create the nodes
+  const node = g.selectAll("circle")
+  .data(nodes)
+  .enter().append("circle")
+  .attr("r", 5)
+  .attr("fill", "red")
+  .call(d3.drag()
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended))
+  .on("mouseover", function(event, d) {
+    d3.select(this)
+      .transition()
+      .duration(300)
+      .attr("r", 10); // increases radius on mousehover
+  })
+  .on("mouseout", function(event, d) {
+    d3.select(this)
+      .transition()
+      .duration(300)
+      .attr("r", 5); // Revert the radius when mouseout
+  });
 
-    // Add circles for nodes
-    node.append("circle")
-      .attr("r", 10)
-      .attr("fill", "blue");
+  node.append("title")
+  .text(d => d.label); 
 
-    // Add labels for nodes
-    node.append("text")
-      .text(d => d.label)
-      .attr("dx", 12)
-      .attr("dy", 4);
 
-    // Update positions of nodes and links in each simulation tick
+    // Add tick event listener to update positions
     simulation.on("tick", () => {
-      link
-        .attr("x1", d => d.source.x)
-        .attr("y1", d => d.source.y)
-        .attr("x2", d => d.target.x)
-        .attr("y2", d => d.target.y);
+      link.attr("x1", d => d.source.x)
+          .attr("y1", d => d.source.y)
+          .attr("x2", d => d.target.x)
+          .attr("y2", d => d.target.y);
 
-      node
-        .attr("transform", d => `translate(${d.x},${d.y})`);
+      node.attr("cx", d => d.x)
+          .attr("cy", d => d.y);
     });
 
-    // Cleanup function
-    return cleanup;
-  }, []); // Empty dependency array ensures the code runs once after initial render
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
 
-  // Drag functions
-  const dragstarted = (event, d) => {
-    if (!event.active) d.fx = d.x;
-    if (!event.active) d.fy = d.y;
-  };
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
 
-  const dragged = (event, d) => {
-    d.fx = event.x;
-    d.fy = event.y;
-  };
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
 
-  const dragended = (event, d) => {
-    if (!event.active) d.fx = null;
-    if (!event.active) d.fy = null;
-  };
+    // Cleanup function to stop simulation on component unmount
+    return () => simulation.stop();
+  }, [nodes, links]); // Re-run effect if nodes or links change
 
-  return (
-    <>
-        <div ref={graphContainerRef} id="graph-container"></div>
-        <button>
-            <a href="/">Return to Homepage</a>
-        </button>
-    </>
-    );
+  return <div ref={graphContainerRef} style={{ width: '100%', height: '100%' }} />;
 };
 
 export default DisplayGraph;
