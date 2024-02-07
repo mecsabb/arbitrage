@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 
 
-def get_conversion(curr1: str,curr2: str,fee = 0.26):
+def get_conversion(curr1: str,curr2: str,fee = 0):
     """Returns the price of curr1 in terms of curr2 (i.e. price of 1 bitcoin in terms of USD), with a fee.
         The fee argument is a percentage (e.g 0.26 = 0.26%)
     """
