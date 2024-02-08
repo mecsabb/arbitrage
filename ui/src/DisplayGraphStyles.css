@@ -11,3 +11,12 @@
     opacity: 0;
     transition: opacity 0.3s;
   }
+
+.graph {
+    background-color: antiquewhite;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}

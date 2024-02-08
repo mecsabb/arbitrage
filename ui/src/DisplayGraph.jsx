@@ -46,7 +46,6 @@ const DisplayGraph = ({ nodes, links }) => {
       .attr("stroke", "black")
       .attr("stroke-width", 2);
 
-
     // Create the nodes
     const node = g.selectAll("circle")
       .data(nodes)
@@ -79,11 +78,6 @@ const DisplayGraph = ({ nodes, links }) => {
           .style("opacity", 0); // fades out
     });
 
-
-
-
-
-
     link.on("mouseover", function(event, d) {
       d3.select(this)
           .attr("stroke", "yellow") // Change color to yellow on mouse over
@@ -108,18 +102,14 @@ const DisplayGraph = ({ nodes, links }) => {
           .style("opacity", 0); // fades out
     });
 
-
-
-
     // Add tick event listener to update positions
     simulation.on("tick", () => {
       link.attr("x1", d => d.source.x)
           .attr("y1", d => d.source.y)
           .attr("x2", d => d.target.x)
           .attr("y2", d => d.target.y);
-
       node.attr("cx", d => d.x)
-          .attr("cy", d => d.y);
+          .attr("cy", d => d.y)
     });
 
     function dragstarted(event, d) {
@@ -143,7 +133,7 @@ const DisplayGraph = ({ nodes, links }) => {
     return () => simulation.stop();
   }, [nodes, links]); // Re-run effect if nodes or links change
 
-  return <div ref={graphContainerRef} style={{ width: '100%', height: '100%' }} />;
+  return <div className='graph' ref={graphContainerRef} />;
 };
 
 export default DisplayGraph;
