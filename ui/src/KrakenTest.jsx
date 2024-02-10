@@ -65,7 +65,7 @@ const KrakenTest = () => {
     let nodeID = 1;
 
     pairData.forEach(pair => {
-      const node = pair.origin;
+      const node = pair.pairName[0];
       const destination = pair.pairName[1];
       
       //Won't add USD or EUR as a node
@@ -86,8 +86,8 @@ const KrakenTest = () => {
 
     pairData.forEach(pair => {
       //Won't add any links of nodes that weren't added to the nodeMap (i.e. won't add any links containing USD or EUR)
-      if(nodesMap[pair.origin] && nodesMap[pair.pairName[1]]){
-        const sourceId = nodesMap[pair.origin];
+      if(nodesMap[pair.pairName[0]] && nodesMap[pair.pairName[1]]){
+        const sourceId = nodesMap[pair.pairName[0]];
         const targetId = nodesMap[pair.pairName[1]];
         const jointName = pair.name;
         const edgeWeight = tickerData.find(ticker => ticker.name === jointName)?.lastPrice;
@@ -118,7 +118,7 @@ const KrakenTest = () => {
       const pairsArray = Object.entries(pairJson).map(([name, info]) => ({
         name,
         pairName: info.wsname.split('/'),
-        origin: info.base, 
+        //Removed reading of the base, pairName[0] will give base
       }));
       setPairData(pairsArray);
       
