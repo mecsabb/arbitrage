@@ -6,8 +6,7 @@ import DisplayGraph from './DisplayGraph.jsx'
 // 1) Make the background colour of the fetch kraken example different than the div colour for ease of scrolling
 // 2) Improve the hover labelling, make it so you don't have to hover for like 5 seconds before it shows up
 // 3) Add edge highlighting and edgeWeight display on hover over edges
-// 4) Potentially remove ticker info now that it's redundant
-// 5) Write conditions to not include nodes that only have one edge (They can't be in the cycle anyways)
+// 4) Write conditions to not include nodes that only have one edge (They can't be in the cycle anyways)
 
 const KrakenTest = () => {
   const [tickerData, setTickerData] = useState([]);
@@ -153,23 +152,6 @@ const KrakenTest = () => {
 
   return (
     <>
-      {/* Display tickers three-column layout */}
-      <div>
-        <h2>Cryptocurrency Tickers:</h2>
-        {tickerData.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', overflowY: 'scroll', maxHeight: '600px', scrollbarWidth: 'thin', scrollbarColor: '#ddd #fff' }}>
-            {tickerData.map(({ name, lastPrice }, index) => (
-              <div key={index} style={{ border: '1px solid #ddd', padding: '20px', borderRadius: '8px', textAlign: 'center' }}>
-                <h3>{`Ticker: ${name}`}</h3>
-                <p>{`Last Price: $${lastPrice}`}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
-
       <div>
           <h2>Graph Representation</h2>
             {(linksObject.length > 0 && nodesObject.length > 0) ? (
