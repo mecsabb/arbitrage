@@ -20,3 +20,10 @@
     width: 100%;
     height: 100%;
 }
+
+svg {
+  width: 100vw; /* Viewport Width */
+  height: 100vh; /* Viewport Height */
+  display: block;
+  margin: auto; /* Centering if there's extra space */
+}

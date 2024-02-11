@@ -2,10 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DisplayGraph from './DisplayGraph.jsx'
 
-//TO-DOS: 
-// 4) Potentially remove ticker info now that it's redundant
-// 5) Write conditions to not include nodes that only have one edge (They can't be in the cycle anyways)
-
 const KrakenTest = () => {
   const [tickerData, setTickerData] = useState([]);
   const [pairData, setPairData] = useState([]);
@@ -170,11 +166,11 @@ const KrakenTest = () => {
     <>
       {/* Display tickers three-column layout */}
      
-      <div>
+      <div className='graph-container'>
           <h2>Graph Representation</h2>
             {(linksObject.length > 0 && nodesObject.length > 0 && path.length > 0) ? (
               
-              <DisplayGraph nodes={nodesObject} links={linksObject} path={path} showPath={showPath} setShowPath={setShowPath}></DisplayGraph>
+              <DisplayGraph nodes={nodesObject} links={linksObject} path={path} showPath={showPath}></DisplayGraph>
 
             ) : (
               <p>Loading...</p>
