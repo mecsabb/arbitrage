@@ -2,12 +2,17 @@ import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import './DisplayGraphStyles.css';
 
-const DisplayGraph = ({ nodes, links }) => {
+const DisplayGraph = ({ nodes, links, path, showPath, setShowPath}) => {
   const graphContainerRef = useRef(null);
+  
+  const toggleShowPath = () => {
+    setShowPath(!showPath);
+  }
+
 
   useEffect(() => {
     if (!graphContainerRef.current) return; // Ensure the ref is attached
-
+    
     const width = window.innerWidth;
     const height = window.innerHeight;
 
@@ -57,50 +62,63 @@ const DisplayGraph = ({ nodes, links }) => {
         .on("drag", dragged)
         .on("end", dragended))
       .on("mouseover", function(event, d) {
-        d3.select(this)
-          .transition()
-          .duration(300)
-          .attr("r", 10); // increases radius on mousehover
         tooltip.transition()
           .duration(100) // makes it appear faster
           .style("opacity", 1); // make it fully visible
         tooltip.html(`${d.label}`)
           .style("left", (event.pageX) + "px")
           .style("top", (event.pageY - 28) + "px");
-    })
-      .on("mouseout", function(event, d) {
+      
+      if(!showPath){
         d3.select(this)
           .transition()
           .duration(300)
-          .attr("r", 5); // Revert the radius when mouseout
+          .attr("r", 10); // increases radius on mousehover
+      }
+    })
+      .on("mouseout", function(event, d) {
         tooltip.transition()
           .duration(300)
           .style("opacity", 0); // fades out
+        if(!showPath){
+          d3.select(this)
+          .transition()
+          .duration(300)
+          .attr("r", 5); // Revert the radius when mouseout
+        }    
     });
-
-    link.on("mouseover", function(event, d) {
-      d3.select(this)
+        
+      
+      
+      link.on("mouseover", function(event, d) {
+        tooltip.transition()
+          .duration(100) // makes it appear faster
+          .style("opacity", 1); // make it fully visible
+        tooltip.html(`${d.source.label} to ${d.target.label} exchange rate: ${d.weight}`)
+          .style("left", (event.pageX) + "px")
+          .style("top", (event.pageY - 28) + "px");
+        if(!showPath){
+          d3.select(this)
           .attr("stroke", "yellow") // Change color to yellow on mouse over
           .transition()
           .duration(300)
           .attr("stroke-width", 5);
-      tooltip.transition()
-        .duration(100) // makes it appear faster
-        .style("opacity", 1); // make it fully visible
-      tooltip.html(`${d.source.label} to ${d.target.label} exchange rate: ${d.weight}`)
-        .style("left", (event.pageX) + "px")
-        .style("top", (event.pageY - 28) + "px");
-    })
-      .on("mouseout", function(event, d) {
-        d3.select(this)
-          .attr("stroke", "black") // Revert to original color on mouse out
-          .transition()
-          .duration(300)
-          .attr("stroke-width", 2);
-        tooltip.transition()
-          .duration(300)
-          .style("opacity", 0); // fades out
-    });
+        }
+      })
+        .on("mouseout", function(event, d) {
+          tooltip.transition()
+            .duration(300)
+            .style("opacity", 0); // fades out
+          if(!showPath){
+            d3.select(this)
+            .attr("stroke", "black") // Revert to original color on mouse out
+            .transition()
+            .duration(300)
+            .attr("stroke-width", 2);
+          }
+      });
+    
+    
 
     // Add tick event listener to update positions
     simulation.on("tick", () => {
@@ -129,10 +147,51 @@ const DisplayGraph = ({ nodes, links }) => {
       d.fy = null;
     }
 
+    if (showPath) {
+      // Reset styles for all nodes and links
+      node.attr('fill', 'red').attr('r', 2); // Default fill color for nodes
+      link.attr('stroke', 'black').attr('stroke-width', 1); // Default stroke for links
+
+      // Highlight nodes in the path
+      path.forEach(label => {
+        node.filter(d => d.label === label)
+            .attr('fill', 'blue')
+            .attr('r', 10) // Highlight color for nodes
+        
+      });
+
+    
+      // Highlight links in the path
+      for (let i = 0; i < path.length - 1; i++) {
+        link.filter(d =>  
+            (d.source.label === path[i] && d.target.label === path[i + 1]) || // Check for the link in the order specified in the path
+            (d.source.label === path[i + 1] && d.target.label === path[i]) // Check for the link in the reverse order
+        )
+            .attr('stroke', 'yellow') // Highlight color for links
+            .attr('stroke-width', 3);
+        
+
+      }
+      link.filter(d =>  
+        (d.source.label === path[path.length-1] && d.target.label === path[0]) || // Check for the link in the order specified in the path
+        (d.source.label === path[0] && d.target.label === path[path.length-1]) // Check for the link in the reverse order
+      )
+        .attr('stroke', 'yellow') // Highlight color for links
+        .attr('stroke-width', 3);
+
+      
+
+        
+    }else{
+      d3.select(".tooltip").style("opacity", 0);
+    }
+    
     // Cleanup function to stop simulation on component unmount
     return () => simulation.stop();
-  }, [nodes, links]); // Re-run effect if nodes or links change
+  }, [nodes, links, showPath]); // Re-run effect if nodes, links or showPath change
 
+
+  
   return <div className='graph' ref={graphContainerRef} />;
 };
 
