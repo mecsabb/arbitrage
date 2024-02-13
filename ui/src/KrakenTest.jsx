@@ -184,6 +184,10 @@ const KrakenTest = () => {
     postData();
   }, [showPath]);
 
+  useEffect(() => {
+    console.log("links and node", linksObject, nodesObject);
+  }, [linksObject, nodesObject]);
+
 
   return (
     <>
@@ -191,7 +195,7 @@ const KrakenTest = () => {
      
       <div className='graph-container'>
           <h2>Graph Representation</h2>
-            {(linksObject.length > 0 && nodesObject.length > 0 && path.length > 0) ? (
+            {(linksObject.length > 0 && nodesObject.length > 0) ? (
               
               <DisplayGraph nodes={nodesObject} links={linksObject} path={path} showPath={showPath}></DisplayGraph>
 
