@@ -10,7 +10,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
     
     const width = window.innerWidth/1.3;
     const height = window.innerHeight;
-    console.log("width, height: ", width, height);
+
 
     const zoom = d3.zoom()
       .scaleExtent([0.5, 4])

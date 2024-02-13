@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DisplayGraph from './DisplayGraph.jsx'
+import { link } from 'd3';
 
 const KrakenTest = () => {
   const [tickerData, setTickerData] = useState([]);
@@ -37,21 +38,48 @@ const KrakenTest = () => {
     }
   }
 
-  const postCombinedData = async (tickerJson, pairJson) => {
-    
+  const postCombinedData = async () => {
+    console.log("linksObj: ", linksObject);
     //combinedData is json containing all of both the ticker and assetPair data. 
     // **NOTE: pairJson is quite large, and a lot of it is unecessary data, consider dropping some before posting!!**
     // if any further data modification has to happen before the post, it can be done here
-    const combinedData = {
-      tickerJson, 
-      pairJson
-    };
+    const linkData = linksObject.map(link => {
+      const newLink = {...link};
+      newLink.source = {id: link.source.id, label: link.source.label, index: link.source.index};
+      newLink.target = {id: link.target.id, label: link.target.label, index: link.target.index};
+      
+      // console.log(newLink);
+
+      return newLink;
+    })
+    // console.log(linkData);
+
+
+    const nodeData = nodesObject.map(node => {
+      const newNode = {...node};
+
+      delete newNode.x;
+      delete newNode.y;
+      delete newNode.vx;
+      delete newNode.vy;
+
+      return newNode;
+    })
+
+    const postData = [linkData, nodeData]
+    console.log('postData', postData);
+
     try{
       // **UPDATE ENDPOINT WHEN USING/TESTING** 
-      console.log("posting combined data: ", combinedData);
-      const response = await axios.post('http://127.0.0.1:5000/process-graph', combinedData);
+      console.log("posting data: ", postData);
+      const response = await axios.post('http://127.0.0.1:5000/process-graph', postData, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
     
-    
+      setPath(response.data);
+
     } catch(error) {
       console.error("error posting to backend", error);
     }
@@ -125,17 +153,6 @@ const KrakenTest = () => {
       }));
       setPairData(pairsArray);
       
-      //CURRENTLY COMMENTED OUT THE FOLLOWING CODE FOR TESTING OF THE GRAPH REPRESENTATION ON FRONTEND, THIS CODE WOULD POST THE INFO TO THE BACKEND
-      // Here I believe the response will be the output of the model, i.e. the shortest path in some sort of representation
-      // TO-DO: write code to handle the response, put into graph format and display
-
-      //const response = await postCombinedData(tickerJson, pairJson);
-      // return response;
-
-      // All we need is the name and order of the nodes, doesn't have to be formatted nicely.
-      const dummyList = ['XBT', 'MATIC', 'USDT', 'ETH'];
-      const dummyIdList = dummyList.map(nodeName => nodeIdMap[nodeName]); //convert to their respective IDs
-      setPath(dummyList);
 
     } catch (error) {
       console.error("error processing data", error);
@@ -157,9 +174,15 @@ const KrakenTest = () => {
   }, [tickerData, pairData]);
 
   useEffect(() => {
-    console.log("path has been updated to:", path);
-    // Any code here will run after `showPath` has been updated and the component has re-rendered.
-  }, [path]);
+    const postData = () => {
+      if (linksObject.length > 0) {
+        postCombinedData();
+        // You can use the response here if needed
+      }
+    };
+  
+    postData();
+  }, [showPath]);
 
 
   return (
