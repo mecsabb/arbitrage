@@ -3,32 +3,35 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv
 
-from .game import Game
+from game import Game
 
-# "For GCN, we used a 5-layer network with a hidden dimension of size 32."
-# need to make the model apply a 0 probability to illegal moves
+# "For GCN, we used a 5-layer network with a hidden dimension of size 32." - CombOpt Zero
+# Instead, we will proceed with a 3-layer network, same hidden dimension
 
 class GCN(nn.Module):
-    def __init__(self, input_size, output_size, hidden_size=32):
+    def __init__(self, n_features, output_size, hidden_size=32):
         super(GCN, self).__init__()
 
-        self.input_size = input_size
+        self.n_features = n_features
         self.output_size = output_size
         
-        self.conv1 = GCNConv(input_size, 32)
-        self.conv2 = GCNConv(32, 32)
-        self.conv3 = GCNConv(32, 32)
-        self.conv4 = GCNConv(32, 32)
-        self.conv5 = GCNConv(32, 32)
+        # input conv layer, takes input dimension to embedding dimension
+        self.conv_in = GCNConv(n_features, hidden_size)
 
-        self.v_lin = nn.Linear(32, output_size)
-        self.p_lin = nn.Linear(32, output_size)
+        # hidden conv layer
+        self.conv_hidden = GCNConv(hidden_size, hidden_size)
+        
+        # value vector output layer
+        self.value_conv = GCNConv(hidden_size, output_size)
+
+        # policy vector output layer
+        self.policy_conv = GCNConv(hidden_size, output_size)
 
     def illegal_moves_mask(self, game: Game):
         # we set the p and v value of an illegal move to 0
         # - this guarantees the move will not be chosen by SELECT, so we can safely add it as an MCTS Node
 
-        mask = torch.zeros((self.output_size, 1))
+        mask = torch.zeros(game.graph.x.shape[0])
         
         # Find the indices of edges that emanate from the current node
         edges_from_current = game.graph.edge_index[0] == game.current_node
@@ -38,25 +41,31 @@ class GCN(nn.Module):
         
         # Set the mask to 1 for directly connected nodes
         mask[directly_connected_nodes] = 1
+
         return mask
 
-    def forward(self, game: Game, edge_weight=None):
-        x, edge_index = game.graph.x, game.graph.edge_index
-        # make x follow 5 conv layers
-        for i, conv in enumerate([self.conv1, self.conv2, self.conv3, self.conv4, self.conv5]):
-            x = conv(x, edge_index, edge_weight) if i == 0 else conv(x, edge_index)
-            x = F.relu(x)
-            #x = F.dropout(x, training=self.training)
+    def forward(self, game: Game):
+        x, edge_index, edge_attr = game.graph.x, game.graph.edge_index, game.graph.edge_attr
 
-        # make the network output a p and v
-        # - need one fc layer for each
-        p = F.softmax(self.p_lin(x), dim=1)
-        v = self.v_lin(x)
+        # Layer 1, input
+        x = self.conv_in(x, edge_index, edge_attr)
+        x = F.relu(x)
         
-        mask = self.illegal_moves_mask(game)
+        # Layer 2, hidden
+        x = self.conv_hidden(x, edge_index, edge_attr)
+        x = F.relu(x)
 
-        p*= mask
-        v*= mask
+        # Layer 3, out
+        p = self.policy_conv(x, edge_index, edge_attr)
+        v = self.value_conv(x, edge_index, edge_attr)
+
+        # Apply softmax to policy vector to convert logits to probability
+        p = F.softmax(p, dim=1)
+
+        # Apply a mask to 0-out illegal move policy + value
+        mask = self.illegal_moves_mask(game)
+        p = mask * p.t()
+        v = mask * x.t()
 
         return p, v
 

@@ -9,11 +9,20 @@ import matplotlib.pyplot as plt
 class Game:
     """ Game object (named as conventionally MCTS interacts with games) wraps and manages our rl environment """
     def __init__(self, graph: Data, args=None):
-        self.graph = graph
+        self.graph: Data = graph
         self.args = args
-        self.current_node = None
-        self.start_node = None
-        self.visited = set()
+        
+        # HACK: for now, let's start the state as a (uniform) random node
+        # - In reality, this is a (potentially very) bad idea
+        initial_state = np.random.randint(0, len(graph.x) - 1)
+        
+        # the node initial state of the environment
+        self.start_node = initial_state
+        self.current_node = initial_state
+
+        # set the initial_state to be visited
+        self.graph.x[initial_state] = 1
+        self.visited = set([initial_state])
         self.is_terminal = False
 
     def get_state(self):
@@ -26,12 +35,18 @@ class Game:
         return self.graph.edge_index[:, edges_from_current]
     
     def get_total_action_space(self):
+        # Returns all possible nodes
         return torch.tensor([a for a in range(self.graph.x.shape[0])])
 
     def step(self, action):
         # Move along the edge if it's a valid action
+        # BUG: is 'in' correct here?
         if action in self.get_action_space().t():
             self.current_node = action[1].item()
+            
+            # Update visited to include this state, update x to reflect this state change
+            self.visited.add(self.current_node)
+            self.graph.x[self.current_node] = 1.
 
             # Update visited nodes and check for terminal state
             if self.current_node in self.visited and self.current_node == self.start_node:
@@ -43,7 +58,10 @@ class Game:
             reward = self.graph.edge_attr[edge_idx].item() if self.graph.edge_attr is not None else 0
             return self.get_state(), reward, self.is_terminal
         else:
-            raise ValueError("Invalid action")
+            # Formatting might get a little messy here...
+            raise ValueError(f''' 
+                             --- Invalid action, selected action {action} which was not found in action space {self.get_action_space()} ---
+                             ''')
 
     def simulate_step(self, action):
         # The same as step, but without updating actual game state
