@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DisplayGraph from './DisplayGraph.jsx'
-
-//TO-DOS: 
-// 1) Make the background colour of the fetch kraken example different than the div colour for ease of scrolling
-// 2) Improve the hover labelling, make it so you don't have to hover for like 5 seconds before it shows up
-// 3) Add edge highlighting and edgeWeight display on hover over edges
-// 4) Potentially remove ticker info now that it's redundant
-// 5) Write conditions to not include nodes that only have one edge (They can't be in the cycle anyways)
+import { link } from 'd3';
 
 const KrakenTest = () => {
   const [tickerData, setTickerData] = useState([]);
   const [pairData, setPairData] = useState([]);
   const [linksObject, setLinksObject] = useState([]);
   const [nodesObject, setNodesObject] = useState([]);
+  const [path, setPath] = useState([]);
+  const [showPath, setShowPath] = useState(false);
+  const [nodeIdMap, setNodeIdMap] = useState({});
+
+  const toggleShowPath = () => {
+    setShowPath(!showPath);
+  }
 
   const fetchTickerData = async () => {
     try{
@@ -37,21 +38,48 @@ const KrakenTest = () => {
     }
   }
 
-  const postCombinedData = async (tickerJson, pairJson) => {
-    
+  const postCombinedData = async () => {
+    console.log("linksObj: ", linksObject);
     //combinedData is json containing all of both the ticker and assetPair data. 
     // **NOTE: pairJson is quite large, and a lot of it is unecessary data, consider dropping some before posting!!**
     // if any further data modification has to happen before the post, it can be done here
-    const combinedData = {
-      tickerJson, 
-      pairJson
-    };
+    const linkData = linksObject.map(link => {
+      const newLink = {...link};
+      newLink.source = {id: link.source.id, label: link.source.label, index: link.source.index};
+      newLink.target = {id: link.target.id, label: link.target.label, index: link.target.index};
+      
+      // console.log(newLink);
+
+      return newLink;
+    })
+    // console.log(linkData);
+
+
+    const nodeData = nodesObject.map(node => {
+      const newNode = {...node};
+
+      delete newNode.x;
+      delete newNode.y;
+      delete newNode.vx;
+      delete newNode.vy;
+
+      return newNode;
+    })
+
+    const postData = [linkData, nodeData]
+    console.log('postData', postData);
+
     try{
       // **UPDATE ENDPOINT WHEN USING/TESTING** 
-      console.log("posting combined data: ", combinedData);
-      const response = await axios.post('http://127.0.0.1:5000/process-graph', combinedData);
+      console.log("posting data: ", postData);
+      const response = await axios.post('http://127.0.0.1:5000/process-graph', postData, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
     
-    
+      setPath(response.data);
+
     } catch(error) {
       console.error("error posting to backend", error);
     }
@@ -81,8 +109,11 @@ const KrakenTest = () => {
           nodes.push({id: nodeID, label: destination})
           nodeID++;
         }
+
       }
     });
+    setNodeIdMap(nodesMap);
+
 
     pairData.forEach(pair => {
       //Won't add any links of nodes that weren't added to the nodeMap (i.e. won't add any links containing USD or EUR)
@@ -122,12 +153,6 @@ const KrakenTest = () => {
       }));
       setPairData(pairsArray);
       
-      //CURRENTLY COMMENTED OUT THE FOLLOWING CODE FOR TESTING OF THE GRAPH REPRESENTATION ON FRONTEND, THIS CODE WOULD POST THE INFO TO THE BACKEND
-      // Here I believe the response will be the output of the model, i.e. the shortest path in some sort of representation
-      // TO-DO: write code to handle the response, put into graph format and display
-
-      //const response = await postCombinedData(tickerJson, pairJson);
-      // return response;
 
     } catch (error) {
       console.error("error processing data", error);
@@ -146,41 +171,43 @@ const KrakenTest = () => {
     if(tickerData.length > 0 && pairData.length > 0){
       createGraphData();
     }
-    console.log("links obj, ", linksObject);
   }, [tickerData, pairData]);
 
+  useEffect(() => {
+    const postData = () => {
+      if (linksObject.length > 0) {
+        postCombinedData();
+        // You can use the response here if needed
+      }
+    };
+  
+    postData();
+  }, [showPath]);
+
+  useEffect(() => {
+    console.log("links and node", linksObject, nodesObject);
+  }, [linksObject, nodesObject]);
 
 
   return (
     <>
       {/* Display tickers three-column layout */}
-      <div>
-        <h2>Cryptocurrency Tickers:</h2>
-        {tickerData.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', overflowY: 'scroll', maxHeight: '600px', scrollbarWidth: 'thin', scrollbarColor: '#ddd #fff' }}>
-            {tickerData.map(({ name, lastPrice }, index) => (
-              <div key={index} style={{ border: '1px solid #ddd', padding: '20px', borderRadius: '8px', textAlign: 'center' }}>
-                <h3>{`Ticker: ${name}`}</h3>
-                <p>{`Last Price: $${lastPrice}`}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
-
-      <div>
+     
+      <div className='graph-container'>
           <h2>Graph Representation</h2>
             {(linksObject.length > 0 && nodesObject.length > 0) ? (
               
-              <DisplayGraph nodes={nodesObject} links={linksObject}></DisplayGraph>
+              <DisplayGraph nodes={nodesObject} links={linksObject} path={path} showPath={showPath}></DisplayGraph>
 
             ) : (
               <p>Loading...</p>
             )}
 
       </div>
+
+      <button onClick={() => toggleShowPath()}>
+        Find Optimal Path
+      </button>
 
       {/* Return to Homepage button */}
       <button>
