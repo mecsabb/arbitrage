@@ -10,6 +10,7 @@ import time
 import torch_geometric
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 
 class Graph:
     def __init__(self):
@@ -23,50 +24,6 @@ class Graph:
         edge_attr = torch.tensor([weight, weight], dtype=torch.float)  
         self.data.edge_index = torch.cat([self.data.edge_index, edge_index], dim=1) if self.data.edge_index is not None else edge_index
         self.data.edge_attr = torch.cat([self.data.edge_attr, edge_attr]) if self.data.edge_attr is not None else edge_attr
-
-    def bellman_ford(self, source):
-        """
-        Executes the Bellman-Ford algorithm on the graph from a given source node,
-        and measures the time it takes to execute.
-        
-        Returns a tuple with the execution time followed by two dictionaries 
-        representing the distance to each node and the predecessor of each node.
-        """
-        # Check if the source node is in the graph
-        if source not in self.graph.nodes:
-            raise ValueError("Source node not found in graph")
-
-        start_time = time.time()
-
-        # Prepare the distance and predecessor for each node
-        distance = {node: float('inf') for node in self.graph.nodes}
-        predecessor = {node: None for node in self.graph.nodes}
-        distance[source] = 0
-
-        # Relax the edges
-        for _ in range(len(self.graph) - 1):
-            for u, v, attr in self.graph.edges(data=True):
-                weight = attr['weight']
-                if distance[u] + weight < distance[v]:
-                    distance[v] = distance[u] + weight
-                    predecessor[v] = u
-
-        # Check for negative weight cycles
-        for u, v, attr in self.graph.edges(data=True):
-            weight = attr['weight']
-            if distance[u] + weight < distance[v]:
-                end_time = time.time()
-                print(
-                    f"Execution time before detecting negative cycle: {end_time - start_time:.5f} seconds")
-                raise nx.NetworkXUnbounded(
-                    "Graph contains a negative weight cycle.")
-
-        end_time = time.time()
-        execution_time = end_time - start_time
-
-        return execution_time, distance, predecessor
-
-    # What else is convenient / needed?
 
 class GraphGenerator:
     def __init__(self, min_weight=1.0, max_weight=10.0, max_nodes=26):
@@ -137,28 +94,36 @@ class GraphGenerator:
 
         return graph
 
-if __name__ == '__main__':
-    # Create a custom graph and add nodes and edges
-    try:
-        g = Graph()
-        g.add_node("A")
-        g.add_node("B")
-        g.add_node("C")
+def create_random_graph(num_nodes, num_edges, num_node_features=1):
+    # Initialize an empty set for unique edges
+    unique_edges = set()
+    
+    # Keep generating edges until we have the desired number of unique edges
+    while len(unique_edges) < num_edges:
+        # Generate a random edge
+        edge = tuple(np.random.choice(range(num_nodes), size=2, replace=False))
+        
+        # Check for self-loop (we already avoid it by using replace=False)
+        # and if it's not already in the set, add the edge
+        if edge[0] != edge[1]:
+            unique_edges.add(edge)
+    
+    # Convert the set of edges to a NumPy array
+    edge_list = np.array(list(unique_edges)).T
+    
+    # Convert to PyTorch tensor
+    edge_index = torch.tensor(edge_list, dtype=torch.long)
+    
+    # Initialize node features to 0
+    x = torch.zeros((num_nodes, num_node_features), dtype=torch.float)
 
-        g.add_edge("A", "B", -1)
-        g.add_edge("B", "C", 4)
-        g.add_edge("A", "C", 3)
+    # Random edge weights
+    attr = torch.rand((num_edges, 1))
 
-        # Run the Bellman-Ford algorithm
-        execution_time, distance, predecessor = g.bellman_ford("A")
-
-        print(f"Bellman-Ford algorithm executed in {execution_time:.5f} seconds")
-        print("Distance:", distance)
-        print("Predecessor:", predecessor)
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
+    # Create the PyG Data object
+    data = Data(x=x, edge_index=edge_index, edge_attr=attr)
+    
+    return data
 
 def print_graph(G, pos, node_labels=None, edge_labels=None, highlighted_nodes=None):
 
@@ -210,4 +175,3 @@ def print_graph_example():
 
     plt.ioff()
     plt.show()
-
