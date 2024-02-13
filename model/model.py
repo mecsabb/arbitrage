@@ -72,7 +72,50 @@ class GCN(nn.Module):
 class GCNLoss(nn.Module):
     def __init__(self):
         super(GCNLoss, self).__init__()
+
+
+    def mse(z_prime,v_a):
+        """
+        Function for (z'-v_a)^2
+        :param z_prime: normalized cumulative reward for taking action a from state s (scalar value)
+        :param v_a: predicted normalized reward for taking action a from state (scalar value)
+        """
+        #Pretty sure parameters are NOT vectors, but could be wrong
+        return (z_prime - v_a)**2
+        #alternative result if they are vectors:
+        # z_prime = torch.tensor(z_prime)
+        # v_a = torch.tensor(v_a)
+        # return torch.mean((z_prime-v_a)**2)
+
     
-    def forward(self, params):
-        # TODO: create loss function from paper @Elliot
-        pass
+    def cross_entropy(p,pi):
+        """
+        Cross entropy loss function. Compares the 
+        :param p: policy vector (what's provided initially by the neural network)
+        :param pi: enhanced policy vector (refined policy vector from the MCTS)
+        """
+        if len(p) != len(pi):
+            raise Exception("Length of policy vector (p) does not match length of enhanced policy vector (pi)")
+        p = torch.tensor(p)
+        pi = torch.tensor(pi)
+        #torch only has a built-in binary cross entropy function, 
+        #but not cross entropy for multiple probability distributions
+        #so, that's what this is supposed to be:
+        return torch.mean(-torch.sum(pi * torch.log(p), 1))
+        #Source: https://stackoverflow.com/questions/68609414/how-to-calculate-correct-cross-entropy-between-2-tensors-in-pytorch-when-target
+        
+
+    def l2_regularization(creg,theta):
+        """
+        L2 reguralization: meant to prevent overfitting by discouraging larger parameters.
+        :param creg: strength/regularization constant - the higher the more sensitive it will be to detect overfitting
+        :param theta: list (?) of the model's parameters (i.e. theta0,theta1,...,thetan)
+        """
+        #Theta is the models "parameters". Not 100% sure what shape it is or how we can access it
+        theta = torch.tensor(theta)
+        theta = theta ** 2
+        return creg*torch.sum((theta))
+
+        
+    def forward(self, z_prime,v_a,p,pi,creg,theta):
+        return cross_entropy(p,pi) + cross_entropy(p,pi) + l2_regularization(creg,theta)
