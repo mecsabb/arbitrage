@@ -177,6 +177,10 @@ nav {
   justify-content: center;
 }
 
+.text p {
+  margin-bottom: -1rem;
+}
+
 @keyframes headerAnimation {
   0% {
     transform: translateY(0);
@@ -234,6 +238,7 @@ nav {
 .authors {
   height: 2rem;
   width: 2rem;
+  transition: transform 0.5s ease;
 }
 
 .popup {
