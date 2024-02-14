@@ -1,15 +1,9 @@
 :root {
-  --text-color-light: #242424;
-  --text-color-dark: #f9f9f9;
-  --background-color-light: #f9f9f9;
-  --background-color-dark: #242424;
+  --color-dark: #242424;
+  --color-light: white;
   --accent-color: #646cff;
-  --accent-hover-color: #646cff;
-  --button-background-light: #f9f9f9;
   --button-background-dark: #1a1a1a;
-  --nav-background-light: #f9f9f9;
-  --nav-background-dark: #1a1a1a;
-  --nav-hover-color: #646cff;
+  --button-background-light: #f9f9f9;
   
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -24,8 +18,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: var(--background-color-dark);
-  color: var(--text-color-dark);
+  background-color: var(--color-dark);
+  color: var(--color-light);
 }
 
 a {
@@ -34,7 +28,7 @@ a {
   text-decoration: inherit;
 }
 a:hover {
-  color: var(--accent-hover-color);
+  color: var(--accent-color);
 }
 
 button {
@@ -48,11 +42,13 @@ button {
   transition: border-color 0.25s;
   margin: 1rem;
   background-color: var(--button-background-dark);
-  color: var(--text-color-dark);
+  color: var(--color-light);
 }
+
 button:hover {
   border-color: var(--accent-color);
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -60,8 +56,8 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   body {
-    background-color: var(--background-color-light);
-    color: var(--text-color-light);
+    background-color: var(--color-light);
+    color: var(--color-dark);
   }
 
   button {
@@ -79,7 +75,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--nav-background-dark);
+  background: var(--button-background-dark);
   padding: 20px 15px;
   border-radius: 12px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -108,7 +104,7 @@ nav {
   left: 0;
   height: 3px;
   width: 0%;
-  background: var(--nav-hover-color);
+  background: var(--accent-color);
   border-radius: 12px;
   transition: all 0.4s ease;
 }
@@ -135,7 +131,7 @@ nav {
 
 @media (prefers-color-scheme: light) {
   .nav-links {
-    background: var(--nav-background-light);
+    background: var(--button-background-light);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   }
 
@@ -236,6 +232,7 @@ nav {
 }
 
 .authors {
+  fill: var(--color-light);
   height: 2rem;
   width: 2rem;
   transition: transform 0.5s ease;
@@ -279,6 +276,73 @@ nav {
   .popup {
     background-color: var(--button-background-light);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  }
+
+}
+
+.btn {
+  position: relative;
+  top: 3vh; 
+  display: inline-block;
+  padding: 1rem 2rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  background-color: var(--button-background-dark);
+}
+
+.btn-more {
+  font-size: 3rem;
+  margin-top: 3rem;
+  font-size: 1.5em; 
+  width: 15rem;
+  transition: background 0.3s ease-out;
+}
+
+.btn:hover {
+  border-color: var(--accent-color); 
+}
+
+.btn-more:hover > i {
+  transform: translateX(0.75rem);
+}
+
+.btn-more > i {
+  margin-left: 10px;
+  transform: translateX(0);
+  transition: transform 0.3s ease-out;
+}
+
+::-webkit-scrollbar {
+  width: 10px; 
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-light);
+  border-radius: 12px; 
+  opacity: 50%;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-dark);
+}
+
+@media (prefers-color-scheme: light) {
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-dark);
+  }
+  
+  ::-webkit-scrollbar-track {
+  background-color: var(--color-light);
+  }
+
+  .authors {
+    fill: var(--color-dark);
+  }
+
+  .btn {
+    background-color: var(--button-background-light);
   }
 
 }
