@@ -1,6 +1,14 @@
-import './App.css'
+import React, { useState } from 'react';
+import './App.css';
 
 function App() {
+  const [isPopupVisible, setIsPopupVisible] = useState(false); // State to track popup visibility
+
+  // Function to toggle popup visibility
+  const togglePopup = () => {
+    setIsPopupVisible(!isPopupVisible);
+  };
+
   return (
     <div className="container">
       <nav>
@@ -23,7 +31,7 @@ function App() {
             </div>
           </div>
           <div className="image">
-            <img src="/assets/cryptorobot.jpg" alt="Your Image" className="image" />
+            <img src="/assets/cryptorobot.jpg" alt="Your Image" className={`image ${isPopupVisible ? 'spin' : ''}`} />
           </div>
         </div>
       </div>
@@ -54,6 +62,24 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget justo
 
 Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. Curabitur tristique magna sapien, eget dictum risus dictum varius. Nulla faucibus urna ut nibh fermentum mattis. Phasellus molestie imperdiet nunc, id pellentesque nisl cursus sit amet. Nulla vitae hendrerit nibh. Proin faucibus lacus non porttitor lacinia. Sed sagittis laoreet felis, a posuere risus sollicitudin quis. Sed auctor vitae quam ac feugiat. Pellentesque sapien lacus, luctus id dolor at, malesuada molestie sapien. Mauris quis malesuada massa, ut sollicitudin erat.</p>
       </div>
+      {isPopupVisible && (
+        <div className="popup visible">
+          <h3>Authors</h3>
+          <hr />
+          <p>Mitchell Sabbadinil</p>
+          <p>Armin Heirani</p>
+          <p>Colin Gould</p>
+          <p>Elliot Thoburn</p>
+          <p>Isaiah Iruoha</p>
+          <p>Daryan Fadavi</p>
+          <p>John Liu</p>
+        </div>
+      )}
+      <div className="icon-background" onClick={togglePopup}>
+       <img src="/assets/author.svg" alt="authors" className={`authors ${isPopupVisible ? 'rotate' : ''}`} />
+      </div>
+      {/* 
+        add a learn more button to take you to page */}
     </div>
   );
 }
