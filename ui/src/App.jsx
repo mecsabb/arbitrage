@@ -79,16 +79,16 @@ Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. C
 
       {isPopupVisible && (
         <div className="popup visible">
-          <h3>Authors</h3>
-          <hr />
-          <p>Mitchell Sabbadinil</p>
-          <p>Armin Heirani</p>
-          <p>Colin Gould</p>
-          <p>Elliot Thoburn</p>
-          <p>Isaiah Iruoha</p>
-          <p>Daryan Fadavi</p>
-          <p>John Liu</p>
-        </div>
+        <h3>Authors</h3>
+        <hr />
+        <a href="https://www.linkedin.com/in/mitchell-sabbadini/">Mitchell Sabbadini</a>
+        <a href="https://www.linkedin.com/in/armin-heirani-871141217/">Armin Heirani</a>
+        <a href="https://www.linkedin.com/in/colin-gould15/">Colin Gould</a>
+        <a href="https://www.linkedin.com/in/elliotthoburn/">Elliot Thoburn</a>
+        <a href="https://www.linkedin.com/in/isaiahiruoha/">Isaiah Iruoha</a>
+        <a href="https://www.linkedin.com/in/daryanfadavi/">Daryan Fadavi</a>
+        <a href="https://www.linkedin.com/in/john-liu-1720b2266/">John Liu</a>
+      </div>
       )}
 
       <div className="icon-background" onClick={togglePopup}>
