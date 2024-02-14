@@ -8,7 +8,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
   useEffect(() => {
     if (!graphContainerRef.current) return; // Ensure the ref is attached
     
-    const width = window.innerWidth/1.3;
+    const width = window.innerWidth/1.5;
     const height = window.innerHeight;
 
 
