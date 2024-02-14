@@ -190,9 +190,7 @@ const KrakenTest = () => {
 
 
   return (
-    <>
-      {/* Display tickers three-column layout */}
-     
+    <>     
       <div className='graph-container'>
           <h2>Graph Representation</h2>
             {(linksObject.length > 0 && nodesObject.length > 0) ? (

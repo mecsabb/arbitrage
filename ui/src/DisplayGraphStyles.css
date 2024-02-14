@@ -22,8 +22,8 @@
 }
 
 svg {
-  width: 100vw; /* Viewport Width */
-  height: 100vh; /* Viewport Height */
+  width: 70vw; /* Viewport Width */
+  height: 90vh; /* Viewport Height */
   display: block;
   margin: auto; /* Centering if there's extra space */
 }
