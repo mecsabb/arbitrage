@@ -13,6 +13,10 @@ function App() {
     <div className="container">
 
       <nav>
+        <a className='qmind'> 
+          <img src="/assets/qmind.svg" alt='qmind logo'></img>
+        </a>
+        
         <ul className="nav-links">
           <li className="upward"><a href="#">Home</a></li>
           <li className="upward"><a href="#implementation">Implementation</a></li>
@@ -81,13 +85,13 @@ Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. C
         <div className="popup visible">
         <h3>Authors</h3>
         <hr />
-        <a href="https://www.linkedin.com/in/mitchell-sabbadini/">Mitchell Sabbadini</a>
-        <a href="https://www.linkedin.com/in/armin-heirani-871141217/">Armin Heirani</a>
-        <a href="https://www.linkedin.com/in/colin-gould15/">Colin Gould</a>
-        <a href="https://www.linkedin.com/in/elliotthoburn/">Elliot Thoburn</a>
-        <a href="https://www.linkedin.com/in/isaiahiruoha/">Isaiah Iruoha</a>
-        <a href="https://www.linkedin.com/in/daryanfadavi/">Daryan Fadavi</a>
-        <a href="https://www.linkedin.com/in/john-liu-1720b2266/">John Liu</a>
+        <a href="https://www.linkedin.com/in/mitchell-sabbadini/" target="_blank">Mitchell Sabbadini</a>
+        <a href="https://www.linkedin.com/in/armin-heirani-871141217/" target="_blank">Armin Heirani</a>
+        <a href="https://www.linkedin.com/in/colin-gould15/" target="_blank">Colin Gould</a>
+        <a href="https://www.linkedin.com/in/elliotthoburn/" target="_blank">Elliot Thoburn</a>
+        <a href="https://www.linkedin.com/in/isaiahiruoha/" target="_blank">Isaiah Iruoha</a>
+        <a href="https://www.linkedin.com/in/daryanfadavi/" target="_blank">Daryan Fadavi</a>
+        <a href="https://www.linkedin.com/in/john-liu-1720b2266/" target="_blank">John Liu</a>
       </div>
       )}
 

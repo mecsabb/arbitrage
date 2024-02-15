@@ -129,6 +129,16 @@ nav {
   opacity: 1;
 }
 
+.qmind {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  position: fixed;
+  left: 2rem;
+  top: 2rem;
+  cursor: pointer;
+}
+
 @media (prefers-color-scheme: light) {
   .nav-links {
     background: var(--button-background-light);
@@ -141,6 +151,10 @@ nav {
 
   .nav-links li a:hover:before {
     background: var(--accent-color);
+  }
+
+  .qmind img {
+    filter: invert(1);
   }
 }
 
