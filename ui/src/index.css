@@ -58,6 +58,11 @@ nav {
   display: flex;
   justify-content: center;
   margin-bottom: 3rem;
+  z-index: 1000;
+}
+
+.nav-links {
+  opacity: 100;
 }
 
 .nav-links {
@@ -69,7 +74,6 @@ nav {
   border-radius: 12px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   position: fixed;
-  z-index: 1000;
 }
 
 .nav-links li {
@@ -87,7 +91,6 @@ nav {
   transition: color 0.4s ease;
 }
 
-
 .nav-links li a:before {
   content: '';
   position: absolute;
@@ -102,11 +105,13 @@ nav {
 
 .nav-links li a:hover:before {
   width: 100%;
+  opacity: 100%;
 }
 
 .nav-links li.center a:before {
   left: 50%;
   transform: translateX(-50%);
+  opacity: 100%;
 }
 
 .nav-links li.upward a:before {
@@ -117,12 +122,17 @@ nav {
 
 .nav-links li.upward a:hover:before {
   bottom: 0px;
-  opacity: 1;
+  opacity: 100%;
 }
 
 .nav-links li a.active {
   color: var(--accent-color); 
   font-weight: bold;
+}
+
+.opacity-low {
+  transition: opacity 0.5s ease;
+  opacity: 75%;
 }
 
 .qmind {

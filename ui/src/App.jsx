@@ -3,16 +3,15 @@ import './App.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // Import AOS CSS file
 
-
 function App() {
   const [isPopupVisible, setIsPopupVisible] = useState(false); // State to track popup visibility
+  const [isPastHome, setIsPastHome] = useState(false); // State to track whether scrolled past home section
+  const [activeSection, setActiveSection] = useState('home'); // State to track active section
 
   // Function to toggle popup visibility
   const togglePopup = () => {
     setIsPopupVisible(!isPopupVisible);
   };
-
-  const [activeSection, setActiveSection] = useState('home'); // State to track active section
 
   // Function to handle scrolling and determine active section
   const handleScroll = () => {
@@ -27,6 +26,9 @@ function App() {
       }
       return false;
     });
+
+    // Set isPastHome based on the activeSection
+    setIsPastHome(middleSection !== 'home');
 
     if (middleSection) {
       setActiveSection(middleSection);
@@ -70,7 +72,7 @@ function App() {
         <a className='qmind' href='https://qmind.ca/' target='_blank'> 
           <img src="/assets/qmind.svg" alt='qmind logo'></img>
         </a>
-        <ul className="nav-links">
+        <ul className={`nav-links ${isPastHome ? 'opacity-low' : ''}`}>
           <li className="upward"><a href="#" className={activeSection === 'home' ? 'active' : ''}>Home</a></li>
           <li className="upward"><a href="#implementation" className={activeSection === 'implementation' ? 'active' : ''}>Implementation</a></li>
           <li className="upward"><a href="#arbitrage" className={activeSection === 'arbitrage' ? 'active' : ''}>Arbitrage</a></li>
@@ -147,7 +149,7 @@ function App() {
           href="https://www.overleaf.com/project/65c2dc3d38eab49cd8ba2af9"
           className="btn btn-more"
           target="_blank"
-          >Learn More <i class="fas fa-chevron-right"></i></a>
+          >Learn More <i className="fas fa-chevron-right"></i></a>
       </div>
       {isPopupVisible && (
         <div className="popup visible">
