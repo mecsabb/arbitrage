@@ -71,7 +71,7 @@ function App() {
           <img src="/assets/qmind.svg" alt='qmind logo'></img>
         </a>
         <ul className="nav-links">
-          <li className="upward"><a href="#home" className={activeSection === 'home' ? 'active' : ''}>Home</a></li>
+          <li className="upward"><a href="#" className={activeSection === 'home' ? 'active' : ''}>Home</a></li>
           <li className="upward"><a href="#implementation" className={activeSection === 'implementation' ? 'active' : ''}>Implementation</a></li>
           <li className="upward"><a href="#arbitrage" className={activeSection === 'arbitrage' ? 'active' : ''}>Arbitrage</a></li>
           <li className="upward"><a href="#methods" className={activeSection === 'methods' ? 'active' : ''}>Methods</a></li>
@@ -89,7 +89,7 @@ function App() {
             </div>
           </div>
           <div className="image">
-            <img src="/assets/cryptorobot.jpg" alt="Your Image" className={`image ${isPopupVisible ? 'spin' : ''}`} />
+            <img src="/assets/cryptorobot.jpg" alt="crypto robot" className="image"/>
           </div>
         </div>
       </div>
@@ -98,9 +98,10 @@ function App() {
         <hr />
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet purus bibendum, auctor lacus in, euismod dolor. Vivamus a consequat odio, vitae dictum nisl. Etiam ullamcorper mollis lacus eu dictum. Quisque eleifend, est a porttitor congue, lectus lorem imperdiet dui, vitae iaculis orci arcu quis leo. Sed at cursus ante. Ut arcu massa, finibus quis odio ut, dignissim cursus enim. Nulla tempor id lectus sed venenatis. Fusce semper neque suscipit nunc volutpat, vel vehicula ligula hendrerit. Pellentesque commodo justo odio, vel ultrices augue maximus ac. Duis eget orci at lorem mollis finibus. Donec vel enim arcu. Sed a neque nulla. Praesent congue quam non faucibus lacinia. Cras tristique sem risus, non laoreet arcu aliquam non. Morbi dictum maximus massa.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget justo lorem. Vivamus id aliquam risus. Integer et risus ligula. Nunc ac leo risus. Duis scelerisque erat sit amet rutrum posuere. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque eget porta ante. Nullam tempor consequat ex, ac auctor eros luctus viverra. Curabitur dui dui, volutpat quis tempus non, finibus sed nulla. Morbi pretium dolor lectus. Mauris bibendum laoreet dui, ac pulvinar dui cursus at. Maecenas quis ex elit. Ut ac dictum sem. Cras lacinia tempor est sollicitudin ullamcorper. Mauris sed nisi ut justo porta iaculis.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet purus bibendum, auctor lacus in, euismod dolor. Vivamus a consequat odio, vitae dictum nisl. Etiam ullamcorper mollis lacus eu dictum. Quisque eleifend, est a porttitor congue, lectus lorem imperdiet dui, vitae iaculis orci arcu quis leo. Sed at cursus ante. Ut arcu massa, finibus quis odio ut, dignissim cursus enim. Nulla tempor id lectus sed venenatis. Fusce semper neque suscipit nunc volutpat, vel vehicula ligula hendrerit. Pellentesque commodo justo odio, vel ultrices augue maximus ac. Duis eget orci at lorem mollis finibus. Donec vel enim arcu. Sed a neque nulla. Praesent congue quam non faucibus lacinia. Cras tristique sem risus, non laoreet arcu aliquam non. Morbi dictum maximus massa.
 
-Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. Curabitur tristique magna sapien, eget dictum risus dictum varius. Nulla faucibus urna ut nibh fermentum mattis. Phasellus molestie imperdiet nunc, id pellentesque nisl cursus sit amet. Nulla vitae hendrerit nibh. Proin faucibus lacus non porttitor lacinia. Sed sagittis laoreet felis, a posuere risus sollicitudin quis. Sed auctor vitae quam ac feugiat. Pellentesque sapien lacus, luctus id dolor at, malesuada molestie sapien. Mauris quis malesuada massa, ut sollicitudin erat.</p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         <div className="vis-graph" data-aos="zoom-in">
           <iframe frameborder="0"
             src="https://observablehq.com/embed/@ameyasd/neighbourhoods-for-cnns-and-gnns?cells=cnn_svg%2Csvg"></iframe>
@@ -109,22 +110,39 @@ Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. C
       <div data-aos="fade-left" className="about" id="arbitrage">
         <h2>Arbitrage</h2>
         <hr />
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet purus bibendum, auctor lacus in, euismod dolor. Vivamus a consequat odio, vitae dictum nisl. Etiam ullamcorper mollis lacus eu dictum. Quisque eleifend, est a porttitor congue, lectus lorem imperdiet dui, vitae iaculis orci arcu quis leo. Sed at cursus ante. Ut arcu massa, finibus quis odio ut, dignissim cursus enim. Nulla tempor id lectus sed venenatis. Fusce semper neque suscipit nunc volutpat, vel vehicula ligula hendrerit. Pellentesque commodo justo odio, vel ultrices augue maximus ac. Duis eget orci at lorem mollis finibus. Donec vel enim arcu. Sed a neque nulla. Praesent congue quam non faucibus lacinia. Cras tristique sem risus, non laoreet arcu aliquam non. Morbi dictum maximus massa.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget justo lorem. Vivamus id aliquam risus. Integer et risus ligula. Nunc ac leo risus. Duis scelerisque erat sit amet rutrum posuere. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque eget porta ante. Nullam tempor consequat ex, ac auctor eros luctus viverra. Curabitur dui dui, volutpat quis tempus non, finibus sed nulla. Morbi pretium dolor lectus. Mauris bibendum laoreet dui, ac pulvinar dui cursus at. Maecenas quis ex elit. Ut ac dictum sem. Cras lacinia tempor est sollicitudin ullamcorper. Mauris sed nisi ut justo porta iaculis.
-
-Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. Curabitur tristique magna sapien, eget dictum risus dictum varius. Nulla faucibus urna ut nibh fermentum mattis. Phasellus molestie imperdiet nunc, id pellentesque nisl cursus sit amet. Nulla vitae hendrerit nibh. Proin faucibus lacus non porttitor lacinia. Sed sagittis laoreet felis, a posuere risus sollicitudin quis. Sed auctor vitae quam ac feugiat. Pellentesque sapien lacus, luctus id dolor at, malesuada molestie sapien. Mauris quis malesuada massa, ut sollicitudin erat.</p>
+        <div className="content">
+          <div className="text">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. 
+              <br></br><br></br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum.</p>
+          </div>
+          <div className="text-image">
+            <img src="/assets/arbitrage.jpg" alt="arbitrage" className="image" />
+          </div>
+        </div>
       </div>
       <div data-aos="zoom-in" className="about" id="methods">
         <h2>Methods</h2>
         <hr />
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet purus bibendum, auctor lacus in, euismod dolor. Vivamus a consequat odio, vitae dictum nisl. Etiam ullamcorper mollis lacus eu dictum. Quisque eleifend, est a porttitor congue, lectus lorem imperdiet dui, vitae iaculis orci arcu quis leo. Sed at cursus ante. Ut arcu massa, finibus quis odio ut, dignissim cursus enim. Nulla tempor id lectus sed venenatis. Fusce semper neque suscipit nunc volutpat, vel vehicula ligula hendrerit. Pellentesque commodo justo odio, vel ultrices augue maximus ac. Duis eget orci at lorem mollis finibus. Donec vel enim arcu. Sed a neque nulla. Praesent congue quam non faucibus lacinia. Cras tristique sem risus, non laoreet arcu aliquam non. Morbi dictum maximus massa.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget justo lorem. Vivamus id aliquam risus. Integer et risus ligula. Nunc ac leo risus. Duis scelerisque erat sit amet rutrum posuere. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque eget porta ante. Nullam tempor consequat ex, ac auctor eros luctus viverra. Curabitur dui dui, volutpat quis tempus non, finibus sed nulla. Morbi pretium dolor lectus. Mauris bibendum laoreet dui, ac pulvinar dui cursus at. Maecenas quis ex elit. Ut ac dictum sem. Cras lacinia tempor est sollicitudin ullamcorper. Mauris sed nisi ut justo porta iaculis.
-
-Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. Curabitur tristique magna sapien, eget dictum risus dictum varius. Nulla faucibus urna ut nibh fermentum mattis. Phasellus molestie imperdiet nunc, id pellentesque nisl cursus sit amet. Nulla vitae hendrerit nibh. Proin faucibus lacus non porttitor lacinia. Sed sagittis laoreet felis, a posuere risus sollicitudin quis. Sed auctor vitae quam ac feugiat. Pellentesque sapien lacus, luctus id dolor at, malesuada molestie sapien. Mauris quis malesuada massa, ut sollicitudin erat.</p>
+        <div className="content-double">
+          <div className="text-image">
+            <img src="/assets/gnn.png" alt="method-one" className="text-image" id="gnn"/>
+          </div>
+          <div className="text">
+            <h3>Graph Neural Network</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum.</p>
+          </div>
+        </div>
+        <div className="content-double">
+          <div className="text-image">
+            <img src="/assets/mcts.svg.png" alt="method-two" className="text-image" id="mcts" />
+          </div>
+          <div className="text">
+            <h3>Monte Carlo Tree Search</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum.</p>
+          </div>
+        </div>
       </div>
-      <div data-aos="fade-up" data-aos-duration="1500">
+      <div data-aos="fade-up" data-aos-duration="1000">
         <a
           href="https://www.overleaf.com/project/65c2dc3d38eab49cd8ba2af9"
           className="btn btn-more"
@@ -133,16 +151,16 @@ Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. C
       </div>
       {isPopupVisible && (
         <div className="popup visible">
-        <h3>Authors</h3>
-        <hr />
-        <a href="https://www.linkedin.com/in/mitchell-sabbadini/" target="_blank">Mitchell Sabbadini</a>
-        <a href="https://www.linkedin.com/in/armin-heirani-871141217/" target="_blank">Armin Heirani</a>
-        <a href="https://www.linkedin.com/in/colin-gould15/" target="_blank">Colin Gould</a>
-        <a href="https://www.linkedin.com/in/elliotthoburn/" target="_blank">Elliot Thoburn</a>
-        <a href="https://www.linkedin.com/in/isaiahiruoha/" target="_blank">Isaiah Iruoha</a>
-        <a href="https://www.linkedin.com/in/daryanfadavi/" target="_blank">Daryan Fadavi</a>
-        <a href="https://www.linkedin.com/in/john-liu-1720b2266/" target="_blank">John Liu</a>
-      </div>
+          <h3>Authors</h3>
+          <hr />
+          <a href="https://www.linkedin.com/in/mitchell-sabbadini/" target="_blank">Mitchell Sabbadini</a>
+          <a href="https://www.linkedin.com/in/armin-heirani-871141217/" target="_blank">Armin Heirani</a>
+          <a href="https://www.linkedin.com/in/colin-gould15/" target="_blank">Colin Gould</a>
+          <a href="https://www.linkedin.com/in/elliotthoburn/" target="_blank">Elliot Thoburn</a>
+          <a href="https://www.linkedin.com/in/isaiahiruoha/" target="_blank">Isaiah Iruoha</a>
+          <a href="https://www.linkedin.com/in/daryanfadavi/" target="_blank">Daryan Fadavi</a>
+          <a href="https://www.linkedin.com/in/john-liu-1720b2266/" target="_blank">John Liu</a>
+        </div>
       )}
       <div className="icon-background" onClick={togglePopup}>
         <svg className={`authors ${isPopupVisible ? 'rotate' : ''}`} fill="#000000" height="800px" width="800px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
@@ -169,4 +187,3 @@ Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. C
 }
 
 export default App;
-
