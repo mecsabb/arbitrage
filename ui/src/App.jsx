@@ -11,12 +11,10 @@ function App() {
 
   return (
     <div className="container">
-
       <nav>
-        <a className='qmind'> 
+        <a className='qmind' href='https://qmind.ca/' target='_blank'> 
           <img src="/assets/qmind.svg" alt='qmind logo'></img>
         </a>
-        
         <ul className="nav-links">
           <li className="upward"><a href="#">Home</a></li>
           <li className="upward"><a href="#implementation">Implementation</a></li>
@@ -24,13 +22,11 @@ function App() {
           <li className="upward"><a href="#methods">Methods</a></li>
         </ul>
       </nav>
-
       <div className="content-box">
-
         <div className="content">
           <div className="text">
             <h2>A Reinforcement Learning Approach to Finding Cryptocurrency Arbitrage Paths</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum.</p>
             <div className="card">
                 <button>
                   <a href="/kraken-test">Generate Optimal Path</a>
@@ -42,7 +38,6 @@ function App() {
           </div>
         </div>
       </div>
-
       <div className="about" id="implementation">
         <h2>Implementation</h2>
         <hr />
@@ -52,7 +47,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget justo
 
 Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. Curabitur tristique magna sapien, eget dictum risus dictum varius. Nulla faucibus urna ut nibh fermentum mattis. Phasellus molestie imperdiet nunc, id pellentesque nisl cursus sit amet. Nulla vitae hendrerit nibh. Proin faucibus lacus non porttitor lacinia. Sed sagittis laoreet felis, a posuere risus sollicitudin quis. Sed auctor vitae quam ac feugiat. Pellentesque sapien lacus, luctus id dolor at, malesuada molestie sapien. Mauris quis malesuada massa, ut sollicitudin erat.</p>
       </div>
-
       <div className="about" id="arbitrage">
         <h2>Arbitrage</h2>
         <hr />
@@ -62,7 +56,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget justo
 
 Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. Curabitur tristique magna sapien, eget dictum risus dictum varius. Nulla faucibus urna ut nibh fermentum mattis. Phasellus molestie imperdiet nunc, id pellentesque nisl cursus sit amet. Nulla vitae hendrerit nibh. Proin faucibus lacus non porttitor lacinia. Sed sagittis laoreet felis, a posuere risus sollicitudin quis. Sed auctor vitae quam ac feugiat. Pellentesque sapien lacus, luctus id dolor at, malesuada molestie sapien. Mauris quis malesuada massa, ut sollicitudin erat.</p>
       </div>
-
       <div className="about" id="methods">
         <h2>Methods</h2>
         <hr />
@@ -72,7 +65,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget justo
 
 Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. Curabitur tristique magna sapien, eget dictum risus dictum varius. Nulla faucibus urna ut nibh fermentum mattis. Phasellus molestie imperdiet nunc, id pellentesque nisl cursus sit amet. Nulla vitae hendrerit nibh. Proin faucibus lacus non porttitor lacinia. Sed sagittis laoreet felis, a posuere risus sollicitudin quis. Sed auctor vitae quam ac feugiat. Pellentesque sapien lacus, luctus id dolor at, malesuada molestie sapien. Mauris quis malesuada massa, ut sollicitudin erat.</p>
       </div>
-
       <div>
         <a
           href="https://www.overleaf.com/project/65c2dc3d38eab49cd8ba2af9"
@@ -80,7 +72,6 @@ Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. C
           target="_blank"
           >Learn More <i class="fas fa-chevron-right"></i></a>
       </div>
-
       {isPopupVisible && (
         <div className="popup visible">
         <h3>Authors</h3>
@@ -94,7 +85,6 @@ Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. C
         <a href="https://www.linkedin.com/in/john-liu-1720b2266/" target="_blank">John Liu</a>
       </div>
       )}
-
       <div className="icon-background" onClick={togglePopup}>
         <svg className={`authors ${isPopupVisible ? 'rotate' : ''}`} fill="#000000" height="800px" width="800px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
         viewBox="0 0 964.07 964.07" xml:space="preserve">
@@ -114,8 +104,7 @@ Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. C
           L358.176,495.258C295.116,551.344,250.776,625.424,231.14,707.501z"/>
         </g>
         </svg>
-      </div>
-      
+      </div> 
     </div>
   );
 }

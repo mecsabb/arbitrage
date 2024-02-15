@@ -89,13 +89,14 @@ nav {
 
 .nav-links li a {
   position: relative;
-  color: var(--accent-color);
+  color: var(--color-light);
   font-size: 20px;
   font-weight: 500;
   padding: 6px 0;
   text-decoration: none;
   transition: color 0.4s ease;
 }
+
 
 .nav-links li a:before {
   content: '';
@@ -146,7 +147,7 @@ nav {
   }
 
   .nav-links li a {
-    color: var(--accent-color);
+    color: var(--color-dark);
   }
 
   .nav-links li a:hover:before {
