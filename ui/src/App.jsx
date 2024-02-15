@@ -3,6 +3,7 @@ import './App.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // Import AOS CSS file
 
+
 function App() {
   const [isPopupVisible, setIsPopupVisible] = useState(false); // State to track popup visibility
 
@@ -63,7 +64,7 @@ function App() {
           </div>
         </div>
       </div>
-      <div data-aos="fade-right" className="about" id="implementation">
+      <div data-aos="fade-right" data-aos-offset="200" className="about" id="implementation">
         <h2>Implementation</h2>
         <hr />
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet purus bibendum, auctor lacus in, euismod dolor. Vivamus a consequat odio, vitae dictum nisl. Etiam ullamcorper mollis lacus eu dictum. Quisque eleifend, est a porttitor congue, lectus lorem imperdiet dui, vitae iaculis orci arcu quis leo. Sed at cursus ante. Ut arcu massa, finibus quis odio ut, dignissim cursus enim. Nulla tempor id lectus sed venenatis. Fusce semper neque suscipit nunc volutpat, vel vehicula ligula hendrerit. Pellentesque commodo justo odio, vel ultrices augue maximus ac. Duis eget orci at lorem mollis finibus. Donec vel enim arcu. Sed a neque nulla. Praesent congue quam non faucibus lacinia. Cras tristique sem risus, non laoreet arcu aliquam non. Morbi dictum maximus massa.
@@ -71,6 +72,10 @@ function App() {
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget justo lorem. Vivamus id aliquam risus. Integer et risus ligula. Nunc ac leo risus. Duis scelerisque erat sit amet rutrum posuere. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque eget porta ante. Nullam tempor consequat ex, ac auctor eros luctus viverra. Curabitur dui dui, volutpat quis tempus non, finibus sed nulla. Morbi pretium dolor lectus. Mauris bibendum laoreet dui, ac pulvinar dui cursus at. Maecenas quis ex elit. Ut ac dictum sem. Cras lacinia tempor est sollicitudin ullamcorper. Mauris sed nisi ut justo porta iaculis.
 
 Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. Curabitur tristique magna sapien, eget dictum risus dictum varius. Nulla faucibus urna ut nibh fermentum mattis. Phasellus molestie imperdiet nunc, id pellentesque nisl cursus sit amet. Nulla vitae hendrerit nibh. Proin faucibus lacus non porttitor lacinia. Sed sagittis laoreet felis, a posuere risus sollicitudin quis. Sed auctor vitae quam ac feugiat. Pellentesque sapien lacus, luctus id dolor at, malesuada molestie sapien. Mauris quis malesuada massa, ut sollicitudin erat.</p>
+        <div className="vis-graph" data-aos="zoom-in">
+          <iframe frameborder="0"
+            src="https://observablehq.com/embed/@ameyasd/neighbourhoods-for-cnns-and-gnns?cells=cnn_svg%2Csvg"></iframe>
+        </div>
       </div>
       <div data-aos="fade-left" className="about" id="arbitrage">
         <h2>Arbitrage</h2>
@@ -90,7 +95,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget justo
 
 Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. Curabitur tristique magna sapien, eget dictum risus dictum varius. Nulla faucibus urna ut nibh fermentum mattis. Phasellus molestie imperdiet nunc, id pellentesque nisl cursus sit amet. Nulla vitae hendrerit nibh. Proin faucibus lacus non porttitor lacinia. Sed sagittis laoreet felis, a posuere risus sollicitudin quis. Sed auctor vitae quam ac feugiat. Pellentesque sapien lacus, luctus id dolor at, malesuada molestie sapien. Mauris quis malesuada massa, ut sollicitudin erat.</p>
       </div>
-      <div data-aos="fade-up">
+      <div data-aos="fade-up" data-aos-duration="1500">
         <a
           href="https://www.overleaf.com/project/65c2dc3d38eab49cd8ba2af9"
           className="btn btn-more"
@@ -135,3 +140,4 @@ Nulla facilisi. Ut blandit scelerisque pellentesque. Nullam id egestas lectus. C
 }
 
 export default App;
+
