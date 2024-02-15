@@ -131,6 +131,11 @@ nav {
   opacity: 1;
 }
 
+.nav-links li a.active {
+  color: var(--accent-color); 
+  font-weight: bold;
+}
+
 .qmind {
   display: flex;
   flex-direction: row;

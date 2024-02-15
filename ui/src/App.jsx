@@ -12,6 +12,35 @@ function App() {
     setIsPopupVisible(!isPopupVisible);
   };
 
+  const [activeSection, setActiveSection] = useState('home'); // State to track active section
+
+  // Function to handle scrolling and determine active section
+  const handleScroll = () => {
+    const sections = ['home', 'implementation', 'arbitrage', 'methods'];
+
+    // Find the section that is currently in the middle of the viewport
+    const middleSection = sections.find(section => {
+      const element = document.getElementById(section);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        return rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2;
+      }
+      return false;
+    });
+
+    if (middleSection) {
+      setActiveSection(middleSection);
+    }
+  };
+
+  // useEffect to attach scroll event listener when component mounts
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []); // Run only once after component mount
+
   useEffect(() => {
     AOS.init({
       // Global settings:
@@ -42,13 +71,13 @@ function App() {
           <img src="/assets/qmind.svg" alt='qmind logo'></img>
         </a>
         <ul className="nav-links">
-          <li className="upward"><a href="#">Home</a></li>
-          <li className="upward"><a href="#implementation">Implementation</a></li>
-          <li className="upward"><a href="#arbitrage">Arbitrage</a></li>
-          <li className="upward"><a href="#methods">Methods</a></li>
+          <li className="upward"><a href="#home" className={activeSection === 'home' ? 'active' : ''}>Home</a></li>
+          <li className="upward"><a href="#implementation" className={activeSection === 'implementation' ? 'active' : ''}>Implementation</a></li>
+          <li className="upward"><a href="#arbitrage" className={activeSection === 'arbitrage' ? 'active' : ''}>Arbitrage</a></li>
+          <li className="upward"><a href="#methods" className={activeSection === 'methods' ? 'active' : ''}>Methods</a></li>
         </ul>
       </nav>
-      <div className="content-box">
+      <div className="content-box" id="home">
         <div className="content">
           <div className="text">
             <h2>A Reinforcement Learning Approach to Finding Cryptocurrency Arbitrage Paths</h2>
