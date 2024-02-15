@@ -4,7 +4,7 @@
   --accent-color: #646cff;
   --button-background-dark: #1a1a1a;
   --button-background-light: #f9f9f9;
-  
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -80,6 +80,7 @@ nav {
   border-radius: 12px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   position: fixed;
+  z-index: 1000;
 }
 
 .nav-links li {
