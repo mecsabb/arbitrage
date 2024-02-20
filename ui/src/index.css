@@ -43,7 +43,7 @@ button {
   transition: border-color 0.25s;
   margin: 1rem;
   background-color: var(--button-background-dark);
-  color: var(--color-light);
+  color: var(--accent-color);
 }
 
 button:hover {

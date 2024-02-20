@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import './DisplayGraphStyles.css';
 
 const DisplayGraph = ({ nodes, links, path, showPath}) => {
   const graphContainerRef = useRef(null);
+  const [totalEdgeWeight, setTotalEdgeWeight] = useState(1);
 
   useEffect(() => {
     if (!graphContainerRef.current) return; // Ensure the ref is attached
@@ -25,7 +26,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
       .attr('width', width)
       .attr('height', height)
       .call(zoom) // Apply zoom behavior to the SVG element
-      .append('g'); // This is where you append your nodes and links
+      //.append('g'); // This is where you append your nodes and links
 
     const g = svg.append('g'); // Append a 'g' element to the SVG for graphical elements
 
@@ -58,7 +59,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
           .attr("stroke", "yellow") // Change color to yellow on mouse over
           .transition()
           .duration(300)
-          .attr("stroke-width", 5);
+          .attr("stroke-width", 4);
         }
       })
       .on("mouseout", function(event, d) {
@@ -78,8 +79,8 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
     const node = g.selectAll("circle")
       .data(nodes)
       .enter().append("circle")
-      .attr("r", 5)
-      .attr("fill", "red")
+      .attr("r", 4)
+      .attr("fill", "#646cff")
       .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
@@ -106,7 +107,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
           d3.select(this)
           .transition()
           .duration(300)
-          .attr("r", 5); // Revert the radius when mouseout
+          .attr("r", 4); // Revert the radius when mouseout
         }    
     });
     
@@ -136,45 +137,89 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
       d.fx = null;
       d.fy = null;
     }
-
+ 
     if (showPath) {
+      setTotalEdgeWeight(1);
       // Reset styles for all nodes and links
-      node.attr('fill', 'red').attr('r', 2); // Default fill color for nodes
-      link.attr('stroke', 'black').attr('stroke-width', 1); // Default stroke for links
+      node.attr('fill', '#646cff').attr('r', 2); // Reset to default fill color for nodes
+      link.attr('stroke', 'black').attr('stroke-width', 1); // Reset to default stroke for links
+  
+      // Function to animate the path
+      const animatePath = (index) => {
+          
+        if (index >= path.length){
+          return;
+        }  // Stop when all nodes have been highlighted
+          
+          // Highlight current node
+          node.filter(d => d.label === path[index])
+              .transition()
+              .duration(200) // Adjust time as needed
+              .attr('fill', 'blue')
+              .attr('r', 10);
+  
+          if (index < path.length - 1) {
+              // Find and highlight the link between the current node and the next
+              const currentLink = link.filter(d =>  
+                  (d.source.label === path[index] && d.target.label === path[index + 1]) ||
+                  (d.source.label === path[index + 1] && d.target.label === path[index])
+              )
 
-      // Highlight nodes in the path
-      path.forEach(label => {
-        node.filter(d => d.label === label)
-            .attr('fill', 'blue')
-            .attr('r', 10) // Highlight color for nodes
-        
-      });
+              currentLink.transition()
+              .delay(300) // Delay to ensure the node turns blue first
+              .duration(750) // Adjust time as needed
+              .attr('stroke', 'yellow')
+              .attr('stroke-width', 3)
+              .on('end', () => {
+                const source = currentLink.data()[0].source.label;
+                const target = currentLink.data()[0].target.label;
+                // FINISH THIS! Need to get the edge weight from the correct link and setTotalEdgeWeight              
+                // if (source === path[index]) {
 
-    
-      // Highlight links in the path
-      for (let i = 0; i < path.length - 1; i++) {
-        link.filter(d =>  
-            (d.source.label === path[i] && d.target.label === path[i + 1]) || // Check for the link in the order specified in the path
-            (d.source.label === path[i + 1] && d.target.label === path[i]) // Check for the link in the reverse order
-        )
-            .attr('stroke', 'yellow') // Highlight color for links
-            .attr('stroke-width', 3);
-        
+                // } else if (target === path[index]) {
+                // }
+                animatePath(index + 1)
+              
+              }); // Move to the next node after the transition
 
-      }
-      link.filter(d =>  
-        (d.source.label === path[path.length-1] && d.target.label === path[0]) || // Check for the link in the order specified in the path
-        (d.source.label === path[0] && d.target.label === path[path.length-1]) // Check for the link in the reverse order
-      )
-        .attr('stroke', 'yellow') // Highlight color for links
-        .attr('stroke-width', 3);
+              
+
+          }else if (index === path.length - 1){
+            link.filter(d => 
+              (d.source.label === path[index] && d.target.label === path[0]) ||
+              (d.source.label === path[0] && d.target.label === path[index])
+            )
+            .transition()
+              .delay(300) // Delay to ensure the node turns blue first
+              .duration(750) // Adjust time as needed
+              .attr('stroke', 'yellow')
+              .attr('stroke-width', 3)
+              .on('end', () => animatePath(index + 1)); // Move to the next node after the transition
+          }
+
+      };
+  
+      // Start the animation with the first node
+      animatePath(0);
     }
     
     // Cleanup function to stop simulation on component unmount
     return () => simulation.stop();
-  }, [nodes, links, showPath]); // Re-run effect if nodes, links or showPath change
+  }, [nodes, links, path, showPath]); // Re-run effect if nodes, links or showPath change
 
-  return <div className='graph' ref={graphContainerRef} />;
+
+
+  return (
+  <>
+  
+    <div className='graph' ref={graphContainerRef} />
+  
+    <div className='card'>
+      Edge weight of path: {totalEdgeWeight}
+    </div>
+
+  </>
+  );
 };
 
 export default DisplayGraph;

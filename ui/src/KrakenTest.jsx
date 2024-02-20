@@ -39,7 +39,7 @@ const KrakenTest = () => {
   }
 
   const postCombinedData = async () => {
-    console.log("linksObj: ", linksObject);
+    // console.log("linksObj: ", linksObject);
     //combinedData is json containing all of both the ticker and assetPair data. 
     // **NOTE: pairJson is quite large, and a lot of it is unecessary data, consider dropping some before posting!!**
     // if any further data modification has to happen before the post, it can be done here
@@ -67,11 +67,11 @@ const KrakenTest = () => {
     })
 
     const postData = [linkData, nodeData]
-    console.log('postData', postData);
+    // console.log('postData', postData);
 
     try{
       // **UPDATE ENDPOINT WHEN USING/TESTING** 
-      console.log("posting data: ", postData);
+      // console.log("posting data: ", postData);
       const response = await axios.post('http://127.0.0.1:5000/process-graph', postData, {
         headers: {
           'Content-Type': 'application/json',
@@ -184,13 +184,13 @@ const KrakenTest = () => {
     postData();
   }, [showPath]);
 
-  useEffect(() => {
-    console.log("links and node", linksObject, nodesObject);
-  }, [linksObject, nodesObject]);
+  // useEffect(() => {
+  //   console.log("links and node", linksObject, nodesObject);
+  // }, [linksObject, nodesObject]);
 
 
   return (
-    <>     
+    <>
       <div className='graph-container'>
           <h2>Graph Representation</h2>
             {(linksObject.length > 0 && nodesObject.length > 0) ? (
