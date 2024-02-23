@@ -5,6 +5,23 @@ import './DisplayGraphStyles.css';
 const DisplayGraph = ({ nodes, links, path, showPath}) => {
   const graphContainerRef = useRef(null);
   const [totalEdgeWeight, setTotalEdgeWeight] = useState(1);
+  const [edgeWeightList, setEdgeWeightList] = useState([]);
+
+  const updateEdgeWeights = (currentLink, index) => {
+    console.log("in updateEdgeWeights");
+    const source = currentLink.data()[0].source.label;
+    const target = currentLink.data()[0].target.label;
+    let nextWeight = currentLink.data()[0].weight;
+    
+    //FINISH THIS! Need to get the edge weight from the correct link and setTotalEdgeWeight              
+    if (target === path[index]) {
+      nextWeight = 1/nextWeight;  //Since edges are bidirectional, but only have one value for each, take inverse of the weight if travelling from target to source
+    } 
+    //const update = totalEdgeWeight * nextWeight;
+    setEdgeWeightList(edgeWeightList => [...edgeWeightList, nextWeight]); //add newest edge weight to the edgeWeightList
+    setTotalEdgeWeight(totalEdgeWeight => totalEdgeWeight * nextWeight); //
+    console.log("exiting updateEdgeWeights"); //this never gets called/never executes 
+  };
 
   useEffect(() => {
     if (!graphContainerRef.current) return; // Ensure the ref is attached
@@ -139,14 +156,16 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
     }
  
     if (showPath) {
-      setTotalEdgeWeight(1);
+
       // Reset styles for all nodes and links
-      node.attr('fill', '#646cff').attr('r', 2); // Reset to default fill color for nodes
-      link.attr('stroke', 'black').attr('stroke-width', 1); // Reset to default stroke for links
+      node.attr('fill', '#646cff').attr('r', 2); // make non-path nodes smaller
+      link.attr('stroke', 'black').attr('stroke-width', 1); // make non-path links smaller
   
+      const updateList = [];
+
       // Function to animate the path
       const animatePath = (index) => {
-          
+          console.log("entering on index = ", index);
         if (index >= path.length){
           return;
         }  // Stop when all nodes have been highlighted
@@ -163,7 +182,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
               const currentLink = link.filter(d =>  
                   (d.source.label === path[index] && d.target.label === path[index + 1]) ||
                   (d.source.label === path[index + 1] && d.target.label === path[index])
-              )
+              );
 
               currentLink.transition()
               .delay(300) // Delay to ensure the node turns blue first
@@ -171,13 +190,8 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
               .attr('stroke', 'yellow')
               .attr('stroke-width', 3)
               .on('end', () => {
-                const source = currentLink.data()[0].source.label;
-                const target = currentLink.data()[0].target.label;
-                // FINISH THIS! Need to get the edge weight from the correct link and setTotalEdgeWeight              
-                // if (source === path[index]) {
-
-                // } else if (target === path[index]) {
-                // }
+                updateEdgeWeights(currentLink, index);
+                //console.log('about to call animatePath recursively');
                 animatePath(index + 1)
               
               }); // Move to the next node after the transition
@@ -185,16 +199,21 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
               
 
           }else if (index === path.length - 1){
-            link.filter(d => 
+            const currentLink = link.filter(d => 
               (d.source.label === path[index] && d.target.label === path[0]) ||
               (d.source.label === path[0] && d.target.label === path[index])
-            )
-            .transition()
+            );
+            
+            currentLink.transition()
               .delay(300) // Delay to ensure the node turns blue first
               .duration(750) // Adjust time as needed
               .attr('stroke', 'yellow')
               .attr('stroke-width', 3)
-              .on('end', () => animatePath(index + 1)); // Move to the next node after the transition
+              .on('end', () => {
+                updateEdgeWeights(currentLink, index);
+
+                animatePath(index + 1)
+              }); // Move to the next node after the transition
           }
 
       };
@@ -205,17 +224,29 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
     
     // Cleanup function to stop simulation on component unmount
     return () => simulation.stop();
-  }, [nodes, links, path, showPath]); // Re-run effect if nodes, links or showPath change
+  }, [nodes, links, showPath, path]); // Re-run effect if nodes, links, path or showPath change
 
+  useEffect(() => {
+    setTotalEdgeWeight(1);
+    setEdgeWeightList([]);
+  }, [showPath]);
 
 
   return (
   <>
   
     <div className='graph' ref={graphContainerRef} />
-  
+    
     <div className='card'>
-      Edge weight of path: {totalEdgeWeight}
+      
+      {edgeWeightList.map((weight, index) => (
+        <p key={index}>Edge #{index + 1}: {weight}</p>
+      ))}
+      {(totalEdgeWeight != 1) ? (
+        <p>Total edge weight of path: {totalEdgeWeight}</p>) : (
+          <p>Press Find Optimal Path to view the ouput of the model</p>
+        )}
+      
     </div>
 
   </>
