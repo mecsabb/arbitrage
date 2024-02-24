@@ -2,28 +2,30 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import './DisplayGraphStyles.css';
 
-const DisplayGraph = ({ nodes, links, path, showPath}) => {
+const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnimationRunning}) => {
   const graphContainerRef = useRef(null);
   const [totalEdgeWeight, setTotalEdgeWeight] = useState(1);
   const [edgeWeightList, setEdgeWeightList] = useState([]);
+  const lastProcessedIndexRef = useRef(-1);
 
   const updateEdgeWeights = (currentLink, index) => {
-    console.log("in updateEdgeWeights");
-    const source = currentLink.data()[0].source.label;
+    if (lastProcessedIndexRef.current === index) {
+      console.log(`Index ${index} has already been processed. Moving on to next index`);
+      return;
+    }
+    lastProcessedIndexRef.current = index;
     const target = currentLink.data()[0].target.label;
-    let nextWeight = currentLink.data()[0].weight;
+    let nextWeight = parseFloat(currentLink.data()[0].weight);
     
-    //FINISH THIS! Need to get the edge weight from the correct link and setTotalEdgeWeight              
     if (target === path[index]) {
       nextWeight = 1/nextWeight;  //Since edges are bidirectional, but only have one value for each, take inverse of the weight if travelling from target to source
     } 
-    //const update = totalEdgeWeight * nextWeight;
+    //nextWeight = nextWeight.toFixed(4);
     setEdgeWeightList(edgeWeightList => [...edgeWeightList, nextWeight]); //add newest edge weight to the edgeWeightList
-    setTotalEdgeWeight(totalEdgeWeight => totalEdgeWeight * nextWeight); //
-    console.log("exiting updateEdgeWeights"); //this never gets called/never executes 
+    setTotalEdgeWeight(totalEdgeWeight => totalEdgeWeight * nextWeight); 
   };
 
-  useEffect(() => {
+  useEffect(() => {    
     if (!graphContainerRef.current) return; // Ensure the ref is attached
     
     const width = window.innerWidth/1.5;
@@ -154,19 +156,17 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
       d.fx = null;
       d.fy = null;
     }
- 
-    if (showPath) {
+    
+    let stopAnimation = false; //used to stop animation when button is pressed again
 
+    if (showPath) {
+      setAnimationRunning(true);
       // Reset styles for all nodes and links
       node.attr('fill', '#646cff').attr('r', 2); // make non-path nodes smaller
       link.attr('stroke', 'black').attr('stroke-width', 1); // make non-path links smaller
-  
-      const updateList = [];
-
       // Function to animate the path
       const animatePath = (index) => {
-          console.log("entering on index = ", index);
-        if (index >= path.length){
+        if (stopAnimation || index >= path.length){
           return;
         }  // Stop when all nodes have been highlighted
           
@@ -184,6 +184,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
                   (d.source.label === path[index + 1] && d.target.label === path[index])
               );
 
+              currentLink.on('end', null);
               currentLink.transition()
               .delay(300) // Delay to ensure the node turns blue first
               .duration(750) // Adjust time as needed
@@ -203,7 +204,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
               (d.source.label === path[index] && d.target.label === path[0]) ||
               (d.source.label === path[0] && d.target.label === path[index])
             );
-            
+            currentLink.on('end', null);
             currentLink.transition()
               .delay(300) // Delay to ensure the node turns blue first
               .duration(750) // Adjust time as needed
@@ -213,6 +214,8 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
                 updateEdgeWeights(currentLink, index);
 
                 animatePath(index + 1)
+
+                setAnimationRunning(false);
               }); // Move to the next node after the transition
           }
 
@@ -223,13 +226,14 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
     }
     
     // Cleanup function to stop simulation on component unmount
-    return () => simulation.stop();
+    return () => {
+      stopAnimation = true;
+      simulation.stop();
+      setTotalEdgeWeight(1);
+      setEdgeWeightList([])
+      setAnimationRunning(false);
+    }
   }, [nodes, links, showPath, path]); // Re-run effect if nodes, links, path or showPath change
-
-  useEffect(() => {
-    setTotalEdgeWeight(1);
-    setEdgeWeightList([]);
-  }, [showPath]);
 
 
   return (
@@ -254,3 +258,4 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
 };
 
 export default DisplayGraph;
+

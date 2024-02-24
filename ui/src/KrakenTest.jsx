@@ -11,6 +11,7 @@ const KrakenTest = () => {
   const [path, setPath] = useState([]);
   const [showPath, setShowPath] = useState(false);
   const [nodeIdMap, setNodeIdMap] = useState({});
+  const [animationRunning, setAnimationRunning] = useState(false);
 
   const toggleShowPath = () => {
     setShowPath(!showPath);
@@ -184,9 +185,9 @@ const KrakenTest = () => {
     postData();
   }, [showPath]);
 
-  // useEffect(() => {
-  //   console.log("links and node", linksObject, nodesObject);
-  // }, [linksObject, nodesObject]);
+  useEffect(() => {
+    console.log("animationRunning: ", animationRunning);
+  }, [animationRunning]);
 
 
   return (
@@ -195,7 +196,7 @@ const KrakenTest = () => {
           <h2>Graph Representation</h2>
             {(linksObject.length > 0 && nodesObject.length > 0) ? (
               
-              <DisplayGraph nodes={nodesObject} links={linksObject} path={path} showPath={showPath}></DisplayGraph>
+              <DisplayGraph nodes={nodesObject} links={linksObject} path={path} showPath={showPath} animationRunning={animationRunning} setAnimationRunning={setAnimationRunning}></DisplayGraph>
 
             ) : (
               <p>Loading...</p>
@@ -203,9 +204,15 @@ const KrakenTest = () => {
 
       </div>
 
-      <button onClick={() => toggleShowPath()}>
+      <button disabled={animationRunning} onClick={() => toggleShowPath()}>
         Find Optimal Path
       </button>
+
+      {(showPath) ? (
+        <button disabled={animationRunning} onClick={() => toggleShowPath()}>Reset</button>
+      ) : (
+        <></>
+      )}
 
       {/* Return to Homepage button */}
       <button>
