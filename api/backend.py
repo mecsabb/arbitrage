@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app, origins=['*']) # Change this before deployment!
 
 def arbitrage_path(edge_index, edge_attr, x):
-    return ['XBT', 'MATIC', 'USDT', 'ETH']
+    return ['XBT', 'MATIC', 'USDT', 'LTC', 'ETH']
 
 def get_model_score(graph):
     return graph

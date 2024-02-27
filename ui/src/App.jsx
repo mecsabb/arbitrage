@@ -85,9 +85,11 @@ function App() {
             <h2>A Reinforcement Learning Approach to Finding Cryptocurrency Arbitrage Paths</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum.</p>
             <div className="card">
-                <button>
-                  <a href="/kraken-test">Generate Optimal Path</a>
-                </button>
+                <a href="/kraken-test">
+                  <button>
+                    Generate Optimal Path
+                  </button>
+                </a>
             </div>
           </div>
           <div className="image">

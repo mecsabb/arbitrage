@@ -20,16 +20,16 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
     if (target === path[index]) {
       nextWeight = 1/nextWeight;  //Since edges are bidirectional, but only have one value for each, take inverse of the weight if travelling from target to source
     } 
-    //nextWeight = nextWeight.toFixed(4);
+    nextWeight = nextWeight.toFixed(4);
     setEdgeWeightList(edgeWeightList => [...edgeWeightList, nextWeight]); //add newest edge weight to the edgeWeightList
-    setTotalEdgeWeight(totalEdgeWeight => totalEdgeWeight * nextWeight); 
+    setTotalEdgeWeight(totalEdgeWeight => (totalEdgeWeight * nextWeight).toFixed(4)); 
   };
 
   useEffect(() => {    
     if (!graphContainerRef.current) return; // Ensure the ref is attached
     
     const width = window.innerWidth/1.5;
-    const height = window.innerHeight;
+    const height = window.innerHeight/1.3;
 
 
     const zoom = d3.zoom()
@@ -239,18 +239,25 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
   return (
   <>
   
-    <div className='graph' ref={graphContainerRef} />
-    
-    <div className='card'>
+    <div className='flex-box'>
+      <div className='graph' ref={graphContainerRef} />
       
-      {edgeWeightList.map((weight, index) => (
-        <p key={index}>Edge #{index + 1}: {weight}</p>
-      ))}
-      {(totalEdgeWeight != 1) ? (
-        <p>Total edge weight of path: {totalEdgeWeight}</p>) : (
-          <p>Press Find Optimal Path to view the ouput of the model</p>
-        )}
+      <div className='console-container'>
+        <div className='logs'>
+          {edgeWeightList.map((weight, index) => (
+            <div className='console-line' key={index}>Edge #{index + 1}: {weight}</div>
+          ))}
+        </div>
       
+        <div className='running-total'>
+          {(totalEdgeWeight !== 1) ? (
+            <>Total edge weight of path: {totalEdgeWeight}</>
+          ) : (
+            <>Press 'Find Optimal Path' to view the output of the model</>
+          )}
+        </div>
+      
+      </div>
     </div>
 
   </>

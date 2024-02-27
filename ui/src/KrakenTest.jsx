@@ -215,9 +215,11 @@ const KrakenTest = () => {
       )}
 
       {/* Return to Homepage button */}
-      <button>
-        <a href="/">Return to Homepage</a>
-      </button>
+      <a href="/">
+        <button>
+          Return to Homepage
+        </button>
+      </a>
     </>
   );
 };
