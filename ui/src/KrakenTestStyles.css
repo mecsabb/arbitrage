@@ -1,5 +1,19 @@
-.graph {
-    width: 75%;
-    height: 75%;
-    overflow: hidden; /* Hide overflow */
-  }
+
+
+.page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.graph-container {
+  display: block;
+  flex-direction: column;
+}
+
+
+.text {
+  padding: 0px;
+}

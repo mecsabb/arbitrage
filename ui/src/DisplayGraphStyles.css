@@ -12,18 +12,84 @@
     transition: opacity 0.3s;
   }
 
+.flex-box {
+  height: 850px;
+  width: 1400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .graph {
-    background-color: antiquewhite;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
+  padding: 0;
+  width: 80%;
+  height: 78%;
+  flex: auto;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin-bottom: 10px; /* Centering if there's extra space */
+  margin-top: 10px;
 }
 
 svg {
-  width: 70vw; /* Viewport Width */
-  height: 90vh; /* Viewport Height */
-  display: block;
-  margin: auto; /* Centering if there's extra space */
+  flex: auto;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  margin: 10px;
+  
 }
+
+
+
+.console-container {
+  display: flex;
+  flex: auto;
+  background-color: #333;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  border-radius: 8px;
+  height: 22%;
+  width: 79%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  text-align: left;
+  padding-bottom: 10px;
+}
+
+.console-line {
+  margin-bottom: 10px;
+}
+
+.logs {
+  flex: auto;
+  padding-bottom: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
+  overflow-y: auto;
+
+}
+
+.running-total {
+  flex: auto;
+  position: absolute;
+  bottom: 0;
+  background-color: #444;
+  color: #4CAF50;
+  padding: 10px;
+  font-weight: bold;
+  border-top: 2px solid #555;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  box-sizing: border-box;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  z-index: 10;
+
+}
+

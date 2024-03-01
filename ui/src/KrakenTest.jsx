@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DisplayGraph from './DisplayGraph.jsx'
+import './KrakenTestStyles.css';
 import { link } from 'd3';
 
 const KrakenTest = () => {
@@ -11,6 +12,7 @@ const KrakenTest = () => {
   const [path, setPath] = useState([]);
   const [showPath, setShowPath] = useState(false);
   const [nodeIdMap, setNodeIdMap] = useState({});
+  const [animationRunning, setAnimationRunning] = useState(false);
 
   const toggleShowPath = () => {
     setShowPath(!showPath);
@@ -39,10 +41,7 @@ const KrakenTest = () => {
   }
 
   const postCombinedData = async () => {
-    console.log("linksObj: ", linksObject);
-    //combinedData is json containing all of both the ticker and assetPair data. 
-    // **NOTE: pairJson is quite large, and a lot of it is unecessary data, consider dropping some before posting!!**
-    // if any further data modification has to happen before the post, it can be done here
+
     const linkData = linksObject.map(link => {
       const newLink = {...link};
       newLink.source = {id: link.source.id, label: link.source.label, index: link.source.index};
@@ -67,18 +66,22 @@ const KrakenTest = () => {
     })
 
     const postData = [linkData, nodeData]
-    console.log('postData', postData);
 
     try{
       // **UPDATE ENDPOINT WHEN USING/TESTING** 
-      console.log("posting data: ", postData);
       const response = await axios.post('http://127.0.0.1:5000/process-graph', postData, {
         headers: {
           'Content-Type': 'application/json',
         }
       });
-    
-      setPath(response.data);
+      const responsePath = response.data;
+      const newPath = [];
+      responsePath.forEach(val => {
+        const toPush = Object.keys(nodeIdMap).find(key => nodeIdMap[key] === val);
+        console.log("toPushL: ", toPush);
+        newPath.push(toPush)
+      })
+      setPath(newPath);
 
     } catch(error) {
       console.error("error posting to backend", error);
@@ -184,18 +187,13 @@ const KrakenTest = () => {
     postData();
   }, [showPath]);
 
-  useEffect(() => {
-    console.log("links and node", linksObject, nodesObject);
-  }, [linksObject, nodesObject]);
-
 
   return (
-    <>     
+    <div className='page'>
       <div className='graph-container'>
-          <h2>Graph Representation</h2>
             {(linksObject.length > 0 && nodesObject.length > 0) ? (
               
-              <DisplayGraph nodes={nodesObject} links={linksObject} path={path} showPath={showPath}></DisplayGraph>
+              <DisplayGraph nodes={nodesObject} links={linksObject} path={path} showPath={showPath} animationRunning={animationRunning} setAnimationRunning={setAnimationRunning}></DisplayGraph>
 
             ) : (
               <p>Loading...</p>
@@ -203,15 +201,23 @@ const KrakenTest = () => {
 
       </div>
 
-      <button onClick={() => toggleShowPath()}>
-        Find Optimal Path
-      </button>
-
-      {/* Return to Homepage button */}
-      <button>
-        <a href="/">Return to Homepage</a>
-      </button>
-    </>
+      <div>
+        <button disabled={animationRunning} onClick={() => toggleShowPath()}>
+          Find Optimal Path
+        </button>
+        {(showPath) ? (
+          <button disabled={animationRunning} onClick={() => toggleShowPath()}>Reset</button>
+        ) : (
+          <></>
+        )}
+        {/* Return to Homepage button */}
+        <a href="/">
+          <button>
+            Return to Homepage
+          </button>
+        </a>
+      </div>
+    </div>
   );
 };
 

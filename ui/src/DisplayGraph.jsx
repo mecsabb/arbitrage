@@ -1,15 +1,38 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import './DisplayGraphStyles.css';
 
-const DisplayGraph = ({ nodes, links, path, showPath}) => {
+const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnimationRunning}) => {
   const graphContainerRef = useRef(null);
+  const [totalEdgeWeight, setTotalEdgeWeight] = useState(1);
+  const [edgeWeightList, setEdgeWeightList] = useState([]);
+  const lastProcessedIndexRef = useRef(-1);
 
-  useEffect(() => {
+  const updateEdgeWeights = (currentLink, index) => {
+    if (lastProcessedIndexRef.current === index) {
+      console.log(`Index ${index} has already been processed. Moving on to next index`);
+      return;
+    }
+    lastProcessedIndexRef.current = index;
+    const target = currentLink.data()[0].target.label;
+    let nextWeight = parseFloat(currentLink.data()[0].weight);
+    
+    if (target === path[index]) {
+      nextWeight = 1/nextWeight;  //Since edges are bidirectional, but only have one value for each, take inverse of the weight if travelling from target to source
+    } 
+    nextWeight = nextWeight.toFixed(8);
+    if (index + 1 === path.length){
+      setEdgeWeightList(edgeWeightList => [...edgeWeightList, {w: nextWeight, s: path[index], t: path[0]}]); //add newest edge weight/node label to the edgeWeightList
+    }
+    setEdgeWeightList(edgeWeightList => [...edgeWeightList, {w: nextWeight, s: path[index], t: path[index+1]}]); //add newest edge weight/node label to the edgeWeightList
+    setTotalEdgeWeight(totalEdgeWeight => (totalEdgeWeight * nextWeight).toFixed(8)); 
+  };
+
+  useEffect(() => {    
     if (!graphContainerRef.current) return; // Ensure the ref is attached
     
-    const width = window.innerWidth/1.5;
-    const height = window.innerHeight;
+    const width = window.innerWidth/1.4;
+    const height = window.innerHeight/1.12;
 
 
     const zoom = d3.zoom()
@@ -25,7 +48,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
       .attr('width', width)
       .attr('height', height)
       .call(zoom) // Apply zoom behavior to the SVG element
-      .append('g'); // This is where you append your nodes and links
+      //.append('g'); // This is where you append your nodes and links
 
     const g = svg.append('g'); // Append a 'g' element to the SVG for graphical elements
 
@@ -58,7 +81,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
           .attr("stroke", "yellow") // Change color to yellow on mouse over
           .transition()
           .duration(300)
-          .attr("stroke-width", 5);
+          .attr("stroke-width", 4);
         }
       })
       .on("mouseout", function(event, d) {
@@ -78,8 +101,8 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
     const node = g.selectAll("circle")
       .data(nodes)
       .enter().append("circle")
-      .attr("r", 5)
-      .attr("fill", "red")
+      .attr("r", 4)
+      .attr("fill", "#646cff")
       .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
@@ -106,7 +129,7 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
           d3.select(this)
           .transition()
           .duration(300)
-          .attr("r", 5); // Revert the radius when mouseout
+          .attr("r", 4); // Revert the radius when mouseout
         }    
     });
     
@@ -136,45 +159,111 @@ const DisplayGraph = ({ nodes, links, path, showPath}) => {
       d.fx = null;
       d.fy = null;
     }
+    
+    let stopAnimation = false; //used to stop animation when button is pressed again
 
     if (showPath) {
+      setAnimationRunning(true);
       // Reset styles for all nodes and links
-      node.attr('fill', 'red').attr('r', 2); // Default fill color for nodes
-      link.attr('stroke', 'black').attr('stroke-width', 1); // Default stroke for links
+      node.attr('fill', '#646cff').attr('r', 2); // make non-path nodes smaller
+      link.attr('stroke', 'black').attr('stroke-width', 1); // make non-path links smaller
+      // Function to animate the path
+      const animatePath = (index) => {
+        if (stopAnimation || index >= path.length){
+          return;
+        }  // Stop when all nodes have been highlighted
+          
+          // Highlight current node
+          node.filter(d => d.label === path[index])
+              .transition()
+              .duration(200) // Adjust time as needed
+              .attr('fill', 'blue')
+              .attr('r', 10);
+  
+          if (index < path.length - 1) {
+              // Find and highlight the link between the current node and the next
+              const currentLink = link.filter(d =>  
+                  (d.source.label === path[index] && d.target.label === path[index + 1]) ||
+                  (d.source.label === path[index + 1] && d.target.label === path[index])
+              );
 
-      // Highlight nodes in the path
-      path.forEach(label => {
-        node.filter(d => d.label === label)
-            .attr('fill', 'blue')
-            .attr('r', 10) // Highlight color for nodes
-        
-      });
+              currentLink.on('end', null);
+              currentLink.transition()
+              .delay(300) // Delay to ensure the node turns blue first
+              .duration(750) // Adjust time as needed
+              .attr('stroke', 'yellow')
+              .attr('stroke-width', 3)
+              .on('end', () => {
+                updateEdgeWeights(currentLink, index);
+                animatePath(index + 1)
+                setAnimationRunning(false);
+              }); // Move to the next node after the transition
 
-    
-      // Highlight links in the path
-      for (let i = 0; i < path.length - 1; i++) {
-        link.filter(d =>  
-            (d.source.label === path[i] && d.target.label === path[i + 1]) || // Check for the link in the order specified in the path
-            (d.source.label === path[i + 1] && d.target.label === path[i]) // Check for the link in the reverse order
-        )
-            .attr('stroke', 'yellow') // Highlight color for links
-            .attr('stroke-width', 3);
-        
+              
 
-      }
-      link.filter(d =>  
-        (d.source.label === path[path.length-1] && d.target.label === path[0]) || // Check for the link in the order specified in the path
-        (d.source.label === path[0] && d.target.label === path[path.length-1]) // Check for the link in the reverse order
-      )
-        .attr('stroke', 'yellow') // Highlight color for links
-        .attr('stroke-width', 3);
+          }else if (index === path.length - 1){
+            const currentLink = link.filter(d => 
+              (d.source.label === path[index] && d.target.label === path[0]) ||
+              (d.source.label === path[0] && d.target.label === path[index])
+            );
+            currentLink.on('end', null);
+            currentLink.transition()
+              .delay(300) // Delay to ensure the node turns blue first
+              .duration(750) // Adjust time as needed
+              .attr('stroke', 'yellow')
+              .attr('stroke-width', 3)
+              .on('end', () => {
+                updateEdgeWeights(currentLink, index);
+
+                animatePath(index + 1)
+
+                setAnimationRunning(false);
+              }); // Move to the next node after the transition
+          }
+
+      };
+  
+      // Start the animation with the first node
+      animatePath(0);
     }
     
     // Cleanup function to stop simulation on component unmount
-    return () => simulation.stop();
-  }, [nodes, links, showPath]); // Re-run effect if nodes, links or showPath change
+    return () => {
+      stopAnimation = true;
+      simulation.stop();
+      setTotalEdgeWeight(1);
+      setEdgeWeightList([])
+      setAnimationRunning(false);
+    }
+  }, [nodes, links, showPath, path]); // Re-run effect if nodes, links, path or showPath change
 
-  return <div className='graph' ref={graphContainerRef} />;
+
+  return (
+  <>
+  
+    <div className='flex-box'>
+      <div className='graph' ref={graphContainerRef} />
+        <div className='console-container'>
+          <div className='logs'>
+            {edgeWeightList.map((obj, index) => (
+              <div className='console-line' key={index}>Exchange Rate of {obj.s}/{obj.t}: {obj.w}</div>
+            ))}
+        </div>
+      
+        <div className='running-total'>
+          {(totalEdgeWeight !== 1) ? (
+            <>Net Exchange Rate: {totalEdgeWeight}</>
+          ) : (
+            <>Press 'Find Optimal Path' to view the output of the model</>
+          )}
+        </div>
+      
+      </div>
+    </div>
+
+  </>
+  );
 };
 
 export default DisplayGraph;
+
