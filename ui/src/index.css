@@ -260,6 +260,7 @@ nav {
   padding: 1rem;
   border-radius: 12px;
   cursor: pointer;
+  margin: 0px;
 }
 
 .authors {
@@ -286,6 +287,8 @@ nav {
   overflow: hidden;
   transition: max-height 0.5s ease-in-out;
 }
+
+
 
 .popup a {
   display: block;
@@ -420,6 +423,10 @@ iframe {
 
   .authors {
     fill: var(--color-dark);
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: var(--button-background-light);
   }
 
   .popup a {

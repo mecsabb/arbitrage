@@ -21,15 +21,18 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
       nextWeight = 1/nextWeight;  //Since edges are bidirectional, but only have one value for each, take inverse of the weight if travelling from target to source
     } 
     nextWeight = nextWeight.toFixed(8);
-    setEdgeWeightList(edgeWeightList => [...edgeWeightList, nextWeight]); //add newest edge weight to the edgeWeightList
+    if (index + 1 === path.length){
+      setEdgeWeightList(edgeWeightList => [...edgeWeightList, {w: nextWeight, s: path[index], t: path[0]}]); //add newest edge weight/node label to the edgeWeightList
+    }
+    setEdgeWeightList(edgeWeightList => [...edgeWeightList, {w: nextWeight, s: path[index], t: path[index+1]}]); //add newest edge weight/node label to the edgeWeightList
     setTotalEdgeWeight(totalEdgeWeight => (totalEdgeWeight * nextWeight).toFixed(8)); 
   };
 
   useEffect(() => {    
     if (!graphContainerRef.current) return; // Ensure the ref is attached
     
-    const width = window.innerWidth/1.5;
-    const height = window.innerHeight/1.25;
+    const width = window.innerWidth/1.4;
+    const height = window.innerHeight/1.12;
 
 
     const zoom = d3.zoom()
@@ -240,17 +243,16 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
   
     <div className='flex-box'>
       <div className='graph' ref={graphContainerRef} />
-      {/* What I want it to say is Exchange rate BTC/ETH: {weight} */}
         <div className='console-container'>
           <div className='logs'>
-            {edgeWeightList.map((weight, index) => (
-              <div className='console-line' key={index}>Edge #{index + 1}: {weight}</div>
+            {edgeWeightList.map((obj, index) => (
+              <div className='console-line' key={index}>Exchange Rate of {obj.s}/{obj.t}: {obj.w}</div>
             ))}
         </div>
       
         <div className='running-total'>
           {(totalEdgeWeight !== 1) ? (
-            <>Total edge weight of path: {totalEdgeWeight}</>
+            <>Net Exchange Rate: {totalEdgeWeight}</>
           ) : (
             <>Press 'Find Optimal Path' to view the output of the model</>
           )}

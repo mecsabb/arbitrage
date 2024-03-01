@@ -187,10 +187,6 @@ const KrakenTest = () => {
     postData();
   }, [showPath]);
 
-  useEffect(() => {
-    console.log("animationRunning: ", animationRunning);
-  }, [animationRunning]);
-
 
   return (
     <div className='page'>

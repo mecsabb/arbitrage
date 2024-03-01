@@ -13,7 +13,7 @@
   }
 
 .flex-box {
-  height: 800px;
+  height: 850px;
   width: 1400px;
   display: flex;
   flex-direction: column;
@@ -38,8 +38,6 @@ svg {
   height: 100%;
   width: 100%;
   background-color: white;
-  /* width: 70vw; /* Viewport Width
-  height: 85vh; Viewport Height */
   border-radius: 12px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   margin: 10px;
