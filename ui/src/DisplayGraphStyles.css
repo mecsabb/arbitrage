@@ -13,6 +13,8 @@
   }
 
 .flex-box {
+  height: 800px;
+  width: 1400px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -20,22 +22,28 @@
 }
 
 .graph {
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    flex: auto;
+  padding: 0;
+  width: 80%;
+  height: 78%;
+  flex: auto;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin-bottom: 10px; /* Centering if there's extra space */
+  margin-top: 10px;
 }
 
 svg {
+  flex: auto;
+  height: 100%;
+  width: 100%;
   background-color: white;
-  width: 70vw; /* Viewport Width */
-  height: 70vh; /* Viewport Height */
+  /* width: 70vw; /* Viewport Width
+  height: 85vh; Viewport Height */
   border-radius: 12px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  display: block;
-  margin: 10px auto; /* Centering if there's extra space */
+  margin: 10px;
+  
 }
 
 
@@ -47,8 +55,8 @@ svg {
   color: #fff;
   font-family: 'Courier New', monospace;
   border-radius: 8px;
-  height: 150px;
-  width: 70vw;
+  height: 22%;
+  width: 79%;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   position: relative;
   text-align: left;

@@ -20,16 +20,16 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
     if (target === path[index]) {
       nextWeight = 1/nextWeight;  //Since edges are bidirectional, but only have one value for each, take inverse of the weight if travelling from target to source
     } 
-    nextWeight = nextWeight.toFixed(4);
+    nextWeight = nextWeight.toFixed(8);
     setEdgeWeightList(edgeWeightList => [...edgeWeightList, nextWeight]); //add newest edge weight to the edgeWeightList
-    setTotalEdgeWeight(totalEdgeWeight => (totalEdgeWeight * nextWeight).toFixed(4)); 
+    setTotalEdgeWeight(totalEdgeWeight => (totalEdgeWeight * nextWeight).toFixed(8)); 
   };
 
   useEffect(() => {    
     if (!graphContainerRef.current) return; // Ensure the ref is attached
     
     const width = window.innerWidth/1.5;
-    const height = window.innerHeight/1.3;
+    const height = window.innerHeight/1.25;
 
 
     const zoom = d3.zoom()
@@ -192,9 +192,8 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
               .attr('stroke-width', 3)
               .on('end', () => {
                 updateEdgeWeights(currentLink, index);
-                //console.log('about to call animatePath recursively');
                 animatePath(index + 1)
-              
+                setAnimationRunning(false);
               }); // Move to the next node after the transition
 
               
@@ -241,12 +240,12 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
   
     <div className='flex-box'>
       <div className='graph' ref={graphContainerRef} />
-      
-      <div className='console-container'>
-        <div className='logs'>
-          {edgeWeightList.map((weight, index) => (
-            <div className='console-line' key={index}>Edge #{index + 1}: {weight}</div>
-          ))}
+      {/* What I want it to say is Exchange rate BTC/ETH: {weight} */}
+        <div className='console-container'>
+          <div className='logs'>
+            {edgeWeightList.map((weight, index) => (
+              <div className='console-line' key={index}>Edge #{index + 1}: {weight}</div>
+            ))}
         </div>
       
         <div className='running-total'>
