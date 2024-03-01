@@ -117,8 +117,8 @@ def create_random_graph(num_nodes, num_edges, num_node_features=1):
     # Initialize node features to 0
     x = torch.zeros((num_nodes, num_node_features), dtype=torch.float)
 
-    # Random edge weights
-    attr = torch.rand((num_edges, 1))
+    # Random edge weights - uniform on [-1, 1]
+    attr = (-2)*torch.rand((num_edges, 1)) + 1
 
     # Create the PyG Data object
     data = Data(x=x, edge_index=edge_index, edge_attr=attr)
