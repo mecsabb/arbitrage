@@ -1,3 +1,8 @@
+import copy
+import random
+import math
+import os
+
 import torch
 from torch_geometric.data import Data
 
@@ -8,14 +13,13 @@ from graphutils import create_random_graph
 
 from model import GCN
 from game import Game
-from mcts import mcts
-
+from mcts import MCTSConfig, mcts
 
 @torch.no_grad
 def eval(model: GCN):
 
     # Create a random graph for evaluation
-    random_graph = create_random_graph(num_nodes=5, num_edges=15)
+    random_graph = create_random_graph(num_nodes=5, num_edges=15) # TODO: fix parameters
     
     # Commenting out print because it doesn't work for me...
     # print_graph(random_graph)
@@ -29,6 +33,7 @@ def eval(model: GCN):
     while not is_terminal:        
         # Get the model's policy and value predictions
         policy, value = model(game)
+
         # Choose the node with the highest probability, create a tensor with the current node
         # - this changes the node selection into an action selection that can be processed by our game state 
         node_selection = torch.multinomial(policy, 1).item()
@@ -77,11 +82,80 @@ def generate_data(network: GCN, graph: Data):
     """
 
     game = Game(graph)
-    records = {}
+    print(f"----- Initialized Game -----\n Edge Index: {game.graph.edge_index.shape}\n Edge Attr: {game.graph.edge_attr.shape}\n x: {game.graph.x.shape}\n Starting Node: {game.start_node}\n")
 
-    pass
+    records = []
+    graphs = []
+
+    config = MCTSConfig(1000, logging=False)
+    network = GCN(1, 1)
+
+    i = 0
+    total_rewards = 0.0
+    while not game.get_is_terminal():
+        #print(i, f"visited: {game.visited}")
+        pi = mcts(config, game, network)
+        action = torch.multinomial(pi, 1).item()
+        current_state = copy.deepcopy(game.current_node) # TODO: these deepcopies might be unneccessary
+        state, reward, terminal = game.step(torch.tensor([current_state, action]))
+        graphs.append(copy.deepcopy(game.graph))
+        records.append((current_state, action, pi, reward))
+        #print(f"action: {action}")
+        total_rewards += reward
+        i += 1
+        
+    z = 0
+    # reward_list = torch.tensor([])
+    final_records = []
+    final_graphs = []
+    for G, R in zip(reversed(graphs), reversed(records)):
+        s, a, p, r = R
+        # reward_list = torch.cat((reward_list, torch.tensor([r])), 0)
+        z += r
+
+        # -- old HACK: right now z_prime is calculated from rewards list but I believe it should be from the MCTSNode mu and sigma
+        # z_prime = (z - torch.mean(reward_list).item()) / torch.std(reward_list).item() if (not torch.std(reward_list).isnan().item()) and (torch.std(reward_list).item() != 0) else 0
+        z_prime = total_rewards # HACK: Now, we use cumulative rewards
+        final_records.append((s, a, p, z_prime))
+        final_graphs.append(G)
+
+    return final_records, final_graphs
+
+def run_datagen(niter: int):
+
+    # Replace with path to the current best model
+    nn = torch.load("model/model_b2.pth")
+
+    for i in range(niter):
+        try:
+            print(f'# ---- Iteration {i} ---- #')
+            dset = {"X": [], "Y": []}
+
+            # HACK: these parameters are pretty arbitrary atm...
+            n_nodes = random.randint(10, 100)
+            n_edges = random.randint(n_nodes, math.floor((n_nodes - 1)*n_nodes*(1/2))) # ranges from one edge per node to fully connected
+
+            G = create_random_graph(n_nodes, n_edges)
+            
+            records, graphs = generate_data(nn, G)
+
+            dset["X"] = dset["X"] + graphs
+            dset["Y"] = dset["Y"] + records
+
+            # Dump generated data into existing data file
+            # - TODO: fix this path logic using __file__
+            # - for now, replace with a new file name for the desired dataset location
+            if not os.path.exists('model/dset4.pth'):
+                torch.save(dset, 'model/dset4.pth')
+            else:
+                existing_dset = torch.load('model/dset4.pth')
+                existing_dset["X"] = existing_dset["X"] + dset['X']
+                existing_dset["Y"] = existing_dset["Y"] + dset['Y']
+                torch.save(existing_dset, 'model/dset4.pth')
+        except:
+            continue
 
 if __name__ == '__main__':
-    n_features, output_size = 1, 1
-    model = GCN(n_features, output_size)
-    eval(model)
+    run_datagen(1000)
+
+    # network = GCN(1, 1)
