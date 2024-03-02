@@ -179,6 +179,10 @@ nav {
   margin-bottom: -1rem;
 }
 
+.text :first-child {
+  margin-bottom: 0;
+}
+
 @keyframes headerAnimation {
   0% {
     transform: translateY(0);
@@ -220,14 +224,25 @@ nav {
   max-width: 100%;
   margin-top: 2rem;
   margin-right: 2rem;
+  margin-left: 3rem; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+}
+
+.text h3 {
+  margin-bottom: 1rem;
+}
+
+.content-double :first-of-type{
+  margin-bottom: 1rem; 
 }
 
 .content-double {
     display: flex;
     flex: 1;
     height: auto;
-    margin-bottom: 1rem; 
-    margin-top: -2rem;
+    margin-bottom: -2rem; 
 }
 
 .content-double h3 {
@@ -252,6 +267,10 @@ nav {
   margin-top: 10rem;
 }
 
+#results {
+  margin-bottom: 3rem;
+}
+
 .icon-background {
   position: fixed; 
   left: 1rem;
@@ -268,6 +287,10 @@ nav {
   height: 2rem;
   width: 2rem;
   transition: transform 0.5s ease;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: var(--button-background-dark);
 }
 
 .authors:hover {
@@ -438,10 +461,6 @@ iframe {
   
   ::-webkit-scrollbar-track {
   background-color: var(--color-light);
-  }
-
-  .authors {
-    fill: var(--color-dark);
   }
 
   .btn {
