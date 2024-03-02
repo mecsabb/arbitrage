@@ -47,11 +47,8 @@ const KrakenAPI = () => {
       newLink.source = {id: link.source.id, label: link.source.label, index: link.source.index};
       newLink.target = {id: link.target.id, label: link.target.label, index: link.target.index};
       
-      // console.log(newLink);
-
       return newLink;
     })
-    // console.log(linkData);
 
 
     const nodeData = nodesObject.map(node => {
@@ -66,7 +63,6 @@ const KrakenAPI = () => {
     })
 
     const postData = [linkData, nodeData]
-
     try{
       // **UPDATE ENDPOINT WHEN USING/TESTING** 
       const response = await axios.post('http://127.0.0.1:5000/process-graph', postData, {
@@ -76,14 +72,26 @@ const KrakenAPI = () => {
       });
       const responsePath = response.data;
       const newPath = [];
-      responsePath.forEach(val => {
-        const toPush = Object.keys(nodeIdMap).find(key => nodeIdMap[key] === val);
-        console.log("toPushL: ", toPush);
-        newPath.push(toPush)
-      })
-      setPath(newPath);
+      console.log("Response Path: ", responsePath);
+      if (!responsePath){
+        postCombinedData();
+        return;
+      } else {
+          responsePath.forEach(val => {
+          const toPush = Object.keys(nodeIdMap).find(key => nodeIdMap[key] === val);
+          newPath.push(toPush)
 
-    } catch(error) {
+        });
+
+ 
+          
+       
+          
+        }
+        console.log("newPath, ", newPath);
+        setPath(newPath);
+
+     } catch(error) {
       console.error("error posting to backend", error);
     }
   }
@@ -177,15 +185,19 @@ const KrakenAPI = () => {
   }, [tickerData, pairData]);
 
   useEffect(() => {
+    console.log('animnation running: ', animationRunning);
     const postData = () => {
       if (linksObject.length > 0) {
         postCombinedData();
         // You can use the response here if needed
       }
     };
-  
-    postData();
+    if (showPath){
+      postData();
+    }
   }, [showPath]);
+
+
 
 
   return (
