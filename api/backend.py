@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS # added cors to deal with issues from the frontend and backend being served from separate domains
 import torch
 from torch_geometric.data import Data
+from torch_geometric.utils import to_undirected
 import json
 import copy
 import sys
@@ -18,7 +19,7 @@ model = torch.load('model_b3.pth')
 app = Flask(__name__)
 CORS(app, origins=['*']) # Change this before deployment!
 
-def arbitrage_path(edge_index, edge_attr, x):
+def arbitrage_path(edge_index, edge_attr, x, ea):
     
     G = Data(x, edge_index, edge_attr)
     print(edge_index.t())
@@ -43,11 +44,28 @@ def arbitrage_path(edge_index, edge_attr, x):
         path[i] = node + 1
     
     if len(path) == 2:
-        path = arbitrage_path(edge_index, edge_attr, x)
+        path = arbitrage_path(edge_index, edge_attr, x, ea)
     if path[-1] == path[-3]:
-        path = arbitrage_path(edge_index, edge_attr, x)
-
+        path = arbitrage_path(edge_index, edge_attr, x, ea)
+    
     path = path[path.index(path[-1]):]
+    
+    # # check path len
+    # actions = [torch.tensor(a) for a in zip(path, path[1:])]
+    # print(actions)
+    # edge_list = [tuple(edge) for edge in edge_index.t().tolist()]
+    # weights = []
+    # for edge in torch.stack(actions).tolist():
+    #     print('edge:', edge)
+    #     if tuple(edge) in edge_list:
+    #         print('yes')
+    #         edge_idx = edge_list.index(tuple(edge))
+    #         weights.append(edge_attr[edge_idx])
+    # weight_tensor = torch.stack(weights)
+    # arb = weight_tensor.prod().item()
+    # if arb < 1:
+    #     path = arbitrage_path(edge_index, edge_attr, x, ea)
+
     return path
     # return ['XBT', 'MATIC', 'USDT', 'LTC', 'ETH', 'KAVA']
     # return [1, 3, 5]
@@ -66,6 +84,7 @@ def process_data():
         graph_data = request.json
         tensor_arr = [[], []]
         edge_weights = []
+        ea = []
         x_arr = []
 
         for link in graph_data[0]:
@@ -74,6 +93,7 @@ def process_data():
             tensor_arr[1].append(int(link['target']['id'])-1)
             # edge_weights.append(math.log(float(link['weight'])+0.001))
             edge_weights.append(random.uniform(-1, 1)) # Demo test edges
+            ea.append([float(link['weight'])])
 
         for link in graph_data[0]:
             # print(link)
@@ -81,7 +101,7 @@ def process_data():
             tensor_arr[1].append(int(link['source']['id'])-1)
             # edge_weights.append(math.log(1/(float(link['weight'])+0.1)+0.1))
             edge_weights.append(random.uniform(-1, 1)) # Demo test edges
-
+            ea.append([1 / (float(link['weight']) + 0.0001)])
 
         x_arr = [[0]]*int(len(graph_data[1])) # Creates an array of [0]s the length of the total number of nodes
 
@@ -92,7 +112,7 @@ def process_data():
         x = torch.tensor(x_arr, dtype=torch.float)
         
         #Run through model, get output
-        path = arbitrage_path(edge_index, edge_attr, x)
+        path = arbitrage_path(edge_index, edge_attr, x, torch.tensor(ea))
 
         return jsonify(path)
         # return path as json

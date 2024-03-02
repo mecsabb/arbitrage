@@ -245,6 +245,10 @@ nav {
     margin-bottom: -2rem; 
 }
 
+#training {
+  border-radius: 0;
+}
+
 .content-double h3 {
   margin-bottom: 0;
 }
