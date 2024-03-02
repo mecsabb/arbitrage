@@ -287,6 +287,10 @@ nav {
   height: 2rem;
   width: 2rem;
   transition: transform 0.5s ease;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: var(--button-background-dark);
 }
 
 .authors:hover {
@@ -457,10 +461,6 @@ iframe {
   
   ::-webkit-scrollbar-track {
   background-color: var(--color-light);
-  }
-
-  .authors {
-    fill: var(--color-dark);
   }
 
   .btn {
