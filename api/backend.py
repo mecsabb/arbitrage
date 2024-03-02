@@ -5,36 +5,52 @@ from torch_geometric.data import Data
 import json
 import copy
 import sys
+import math
+import random
 
 sys.path.append("../model")
 
 from game import Game
+from model import GCN
 
-model = torch.load('model_b2.pth')
+model = torch.load('model_b3.pth')
 
 app = Flask(__name__)
 CORS(app, origins=['*']) # Change this before deployment!
 
 def arbitrage_path(edge_index, edge_attr, x):
     
-    # G = Data(x, edge_index, edge_attr)
-    # game = Game(G)
-    # path = [copy.deepcopy(game.current_node)]
+    G = Data(x, edge_index, edge_attr)
+    print(edge_index.t())
+    game = Game(G)
+    print(game.graph.edge_index.t())
+    path = [copy.deepcopy(game.current_node)]
+    try:
+        while not game.is_terminal:
+            policy, value = model(game)
+            model_decision = torch.multinomial(policy, 1)
+            a = torch.cat((torch.tensor([game.current_node]), model_decision), 0)
+            print(a)
+            _, model_reward, _ = game.step(a)
 
-    # while not game.is_terminal:
-    #     policy, value = model(game)
-    #     model_decision = torch.multinomial(policy, 1)
-    #     a = torch.cat((torch.tensor([game.current_node]), model_decision), 0)
-    #     _, model_reward, _ = game.step(a)
+            path.append(model_decision.item())
+    except Exception as e:
+        print(policy)
+        print(e)
+        return False
 
-    #     path.append(model_decision)
-
-    # for node in path:
-    #     node += 1
+    for i, node in enumerate(path):
+        path[i] = node + 1
     
-    # return path
+    if len(path) == 2:
+        path = arbitrage_path(edge_index, edge_attr, x)
+    if path[-1] == path[-3]:
+        path = arbitrage_path(edge_index, edge_attr, x)
+
+    path = path[path.index(path[-1]):]
+    return path
     # return ['XBT', 'MATIC', 'USDT', 'LTC', 'ETH', 'KAVA']
-    return [1, 3, 5]
+    # return [1, 3, 5]
 
 def get_model_score(graph):
     return graph
@@ -54,15 +70,25 @@ def process_data():
 
         for link in graph_data[0]:
             # print(link)
-            tensor_arr[0].append(int(link['source']['index']))
-            tensor_arr[1].append(int(link['target']['index']))
-            edge_weights.append(float(link['weight']))
+            tensor_arr[0].append(int(link['source']['id'])-1)
+            tensor_arr[1].append(int(link['target']['id'])-1)
+            # edge_weights.append(math.log(float(link['weight'])+0.001))
+            edge_weights.append(random.uniform(-1, 1)) # Demo test edges
+
+        for link in graph_data[0]:
+            # print(link)
+            tensor_arr[0].append(int(link['target']['id'])-1)
+            tensor_arr[1].append(int(link['source']['id'])-1)
+            # edge_weights.append(math.log(1/(float(link['weight'])+0.1)+0.1))
+            edge_weights.append(random.uniform(-1, 1)) # Demo test edges
+
 
         x_arr = [[0]]*int(len(graph_data[1])) # Creates an array of [0]s the length of the total number of nodes
 
         # Formatting for the model
         edge_index = torch.tensor(tensor_arr, dtype=torch.long)
         edge_attr = torch.tensor(edge_weights, dtype=torch.float).view(-1, 1)
+        print(edge_index)
         x = torch.tensor(x_arr, dtype=torch.float)
         
         #Run through model, get output

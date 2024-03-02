@@ -7,32 +7,12 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
   const [totalEdgeWeight, setTotalEdgeWeight] = useState(1);
   const [edgeWeightList, setEdgeWeightList] = useState([]);
   const lastProcessedIndexRef = useRef(-1);
-
-  const updateEdgeWeights = (currentLink, index) => {
-    if (lastProcessedIndexRef.current === index) {
-      console.log(`Index ${index} has already been processed. Moving on to next index`);
-      return;
-    }
-    lastProcessedIndexRef.current = index;
-    const target = currentLink.data()[0].target.label;
-    let nextWeight = parseFloat(currentLink.data()[0].weight);
-    
-    if (target === path[index]) {
-      nextWeight = 1/nextWeight;  //Since edges are bidirectional, but only have one value for each, take inverse of the weight if travelling from target to source
-    } 
-    nextWeight = nextWeight.toFixed(8);
-    if (index + 1 === path.length){
-      setEdgeWeightList(edgeWeightList => [...edgeWeightList, {w: nextWeight, s: path[index], t: path[0]}]); //add newest edge weight/node label to the edgeWeightList
-    }
-    setEdgeWeightList(edgeWeightList => [...edgeWeightList, {w: nextWeight, s: path[index], t: path[index+1]}]); //add newest edge weight/node label to the edgeWeightList
-    setTotalEdgeWeight(totalEdgeWeight => (totalEdgeWeight * nextWeight).toFixed(8)); 
-  };
-
+  
   useEffect(() => {    
     if (!graphContainerRef.current) return; // Ensure the ref is attached
     
-    const width = window.innerWidth/1.4;
-    const height = window.innerHeight/1.12;
+    const width = window.innerWidth/1.85;
+    const height = window.innerHeight/1.3;
 
 
     const zoom = d3.zoom()
@@ -48,7 +28,6 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
       .attr('width', width)
       .attr('height', height)
       .call(zoom) // Apply zoom behavior to the SVG element
-      //.append('g'); // This is where you append your nodes and links
 
     const g = svg.append('g'); // Append a 'g' element to the SVG for graphical elements
 
@@ -162,13 +141,18 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
     
     let stopAnimation = false; //used to stop animation when button is pressed again
 
+    if (!showPath) {
+      return;
+    }
+
     if (showPath) {
-      setAnimationRunning(true);
+      
       // Reset styles for all nodes and links
       node.attr('fill', '#646cff').attr('r', 2); // make non-path nodes smaller
       link.attr('stroke', 'black').attr('stroke-width', 1); // make non-path links smaller
       // Function to animate the path
       const animatePath = (index) => {
+        setAnimationRunning(true);
         if (stopAnimation || index >= path.length){
           return;
         }  // Stop when all nodes have been highlighted
@@ -186,6 +170,22 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
                   (d.source.label === path[index] && d.target.label === path[index + 1]) ||
                   (d.source.label === path[index + 1] && d.target.label === path[index])
               );
+              console.log('currentLink source: ', currentLink.datum());
+              
+              let newWeight = currentLink.datum().weight;
+              console.log('target, path, T/F', currentLink.datum().target.label, path[index], currentLink.datum().target.label === path[index]);
+              if (path[index] === currentLink.datum().target.label) {
+                newWeight = 1/newWeight;
+              }
+              console.log('newWeight', newWeight);
+              if (index === 0){
+                setEdgeWeightList(edgeWeightList => [{w: newWeight, s: path[index], t: path[index+1]}]); //add newest edge weight/node label to the edgeWeightList
+              } else {
+                setEdgeWeightList(edgeWeightList => [...edgeWeightList, {w: newWeight, s: path[index], t: path[index+1]}]); //add newest edge weight/node label to the edgeWeightList
+              }
+              setTotalEdgeWeight(totalEdgeWeight => (totalEdgeWeight * newWeight).toFixed(8)); 
+
+              
 
               currentLink.on('end', null);
               currentLink.transition()
@@ -194,31 +194,11 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
               .attr('stroke', 'yellow')
               .attr('stroke-width', 3)
               .on('end', () => {
-                updateEdgeWeights(currentLink, index);
+                //updateEdgeWeights(currentLink, index);
                 animatePath(index + 1)
                 setAnimationRunning(false);
               }); // Move to the next node after the transition
 
-              
-
-          }else if (index === path.length - 1){
-            const currentLink = link.filter(d => 
-              (d.source.label === path[index] && d.target.label === path[0]) ||
-              (d.source.label === path[0] && d.target.label === path[index])
-            );
-            currentLink.on('end', null);
-            currentLink.transition()
-              .delay(300) // Delay to ensure the node turns blue first
-              .duration(750) // Adjust time as needed
-              .attr('stroke', 'yellow')
-              .attr('stroke-width', 3)
-              .on('end', () => {
-                updateEdgeWeights(currentLink, index);
-
-                animatePath(index + 1)
-
-                setAnimationRunning(false);
-              }); // Move to the next node after the transition
           }
 
       };
@@ -237,6 +217,12 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
     }
   }, [nodes, links, showPath, path]); // Re-run effect if nodes, links, path or showPath change
 
+  useEffect(() => {
+    if(!showPath){
+      setEdgeWeightList([]);
+      setTotalEdgeWeight(1);
+    }
+  }, [showPath])
 
   return (
   <>
@@ -246,12 +232,21 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
         <div className='console-container'>
           <div className='logs'>
             {edgeWeightList.map((obj, index) => (
+              // (index === 0) ? (
+              //   <></>
+              // ) : (
+              //   <div className='console-line' key={index}>Exchange Rate of {obj.s}/{obj.t}: {obj.w}</div>
+              // )
               <div className='console-line' key={index}>Exchange Rate of {obj.s}/{obj.t}: {obj.w}</div>
+
             ))}
         </div>
       
         <div className='running-total'>
           {(totalEdgeWeight !== 1) ? (
+            
+            
+            
             <>Net Exchange Rate: {totalEdgeWeight}</>
           ) : (
             <>Press 'Find Optimal Path' to view the output of the model</>
