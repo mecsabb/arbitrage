@@ -20,8 +20,8 @@ body {
   min-height: 100vh;
   background-color: var(--color-dark);
   color: var(--color-light);
+  overflow-x: hidden;
 }
-
 
 a {
   font-weight: 500;
@@ -286,9 +286,8 @@ nav {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.5s ease-in-out;
+  margin-bottom: 1.5rem; 
 }
-
-
 
 .popup a {
   display: block;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DisplayGraph from './DisplayGraph.jsx'
-import './KrakenTestStyles.css';
+import './KrakenAPIStyles.css';
 import { link } from 'd3';
 
-const KrakenTest = () => {
+const KrakenAPI = () => {
   const [tickerData, setTickerData] = useState([]);
   const [pairData, setPairData] = useState([]);
   const [linksObject, setLinksObject] = useState([]);
@@ -221,4 +221,4 @@ const KrakenTest = () => {
   );
 };
 
-export default KrakenTest;
+export default KrakenAPI;

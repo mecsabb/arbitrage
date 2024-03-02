@@ -15,7 +15,7 @@ function App() {
 
   // Function to handle scrolling and determine active section
   const handleScroll = () => {
-    const sections = ['home', 'implementation', 'arbitrage', 'methods'];
+    const sections = ['home', 'results', 'arbitrage', 'methods'];
 
     // Find the section that is currently in the middle of the viewport
     const middleSection = sections.find(section => {
@@ -74,9 +74,9 @@ function App() {
         </a>
         <ul className={`nav-links ${isPastHome ? 'opacity-low' : ''}`}>
           <li className="upward"><a href="#" className={activeSection === 'home' ? 'active' : ''}>Home</a></li>
-          <li className="upward"><a href="#implementation" className={activeSection === 'implementation' ? 'active' : ''}>Implementation</a></li>
           <li className="upward"><a href="#arbitrage" className={activeSection === 'arbitrage' ? 'active' : ''}>Arbitrage</a></li>
           <li className="upward"><a href="#methods" className={activeSection === 'methods' ? 'active' : ''}>Methods</a></li>
+          <li className="upward"><a href="#results" className={activeSection === 'results' ? 'active' : ''}>Results</a></li>
         </ul>
       </nav>
       <div className="content-box" id="home">
@@ -95,20 +95,6 @@ function App() {
           <div className="image">
             <img src="/assets/cryptorobot.jpg" alt="crypto robot" className="image"/>
           </div>
-        </div>
-      </div>
-      <div data-aos="fade-right" data-aos-offset="200" className="about" id="implementation">
-        <h2>Implementation</h2>
-        <hr />
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet purus bibendum, auctor lacus in, euismod dolor. Vivamus a consequat odio, vitae dictum nisl. Etiam ullamcorper mollis lacus eu dictum. Quisque eleifend, est a porttitor congue, lectus lorem imperdiet dui, vitae iaculis orci arcu quis leo. Sed at cursus ante. Ut arcu massa, finibus quis odio ut, dignissim cursus enim. Nulla tempor id lectus sed venenatis. Fusce semper neque suscipit nunc volutpat, vel vehicula ligula hendrerit. Pellentesque commodo justo odio, vel ultrices augue maximus ac. Duis eget orci at lorem mollis finibus. Donec vel enim arcu. Sed a neque nulla. Praesent congue quam non faucibus lacinia. Cras tristique sem risus, non laoreet arcu aliquam non. Morbi dictum maximus massa.
-
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet purus bibendum, auctor lacus in, euismod dolor. Vivamus a consequat odio, vitae dictum nisl. Etiam ullamcorper mollis lacus eu dictum. Quisque eleifend, est a porttitor congue, lectus lorem imperdiet dui, vitae iaculis orci arcu quis leo. Sed at cursus ante. Ut arcu massa, finibus quis odio ut, dignissim cursus enim. Nulla tempor id lectus sed venenatis. Fusce semper neque suscipit nunc volutpat, vel vehicula ligula hendrerit. Pellentesque commodo justo odio, vel ultrices augue maximus ac. Duis eget orci at lorem mollis finibus. Donec vel enim arcu. Sed a neque nulla. Praesent congue quam non faucibus lacinia. Cras tristique sem risus, non laoreet arcu aliquam non. Morbi dictum maximus massa.
-
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        <div className="vis-graph" data-aos="zoom-in">
-          <iframe frameborder="0"
-            src="https://observablehq.com/embed/@ameyasd/neighbourhoods-for-cnns-and-gnns?cells=cnn_svg%2Csvg"></iframe>
         </div>
       </div>
       <div data-aos="fade-left" className="about" id="arbitrage">
@@ -144,6 +130,20 @@ function App() {
             <h3>Monte Carlo Tree Search</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut varius turpis ante, nec varius nisi vehicula a. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum. Suspendisse congue bibendum turpis, eget malesuada risus posuere quis. Nam condimentum libero vestibulum lacus cursus condimentum.</p>
           </div>
+        </div>
+      </div>
+      <div data-aos="fade-right" data-aos-offset="200" className="about" id="results">
+        <h2>Results</h2>
+        <hr />
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet purus bibendum, auctor lacus in, euismod dolor. Vivamus a consequat odio, vitae dictum nisl. Etiam ullamcorper mollis lacus eu dictum. Quisque eleifend, est a porttitor congue, lectus lorem imperdiet dui, vitae iaculis orci arcu quis leo. Sed at cursus ante. Ut arcu massa, finibus quis odio ut, dignissim cursus enim. Nulla tempor id lectus sed venenatis. Fusce semper neque suscipit nunc volutpat, vel vehicula ligula hendrerit. Pellentesque commodo justo odio, vel ultrices augue maximus ac. Duis eget orci at lorem mollis finibus. Donec vel enim arcu. Sed a neque nulla. Praesent congue quam non faucibus lacinia. Cras tristique sem risus, non laoreet arcu aliquam non. Morbi dictum maximus massa.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet purus bibendum, auctor lacus in, euismod dolor. Vivamus a consequat odio, vitae dictum nisl. Etiam ullamcorper mollis lacus eu dictum. Quisque eleifend, est a porttitor congue, lectus lorem imperdiet dui, vitae iaculis orci arcu quis leo. Sed at cursus ante. Ut arcu massa, finibus quis odio ut, dignissim cursus enim. Nulla tempor id lectus sed venenatis. Fusce semper neque suscipit nunc volutpat, vel vehicula ligula hendrerit. Pellentesque commodo justo odio, vel ultrices augue maximus ac. Duis eget orci at lorem mollis finibus. Donec vel enim arcu. Sed a neque nulla. Praesent congue quam non faucibus lacinia. Cras tristique sem risus, non laoreet arcu aliquam non. Morbi dictum maximus massa.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <div className="vis-graph" data-aos="zoom-in">
+          <iframe frameborder="0"
+            src="https://observablehq.com/embed/@ameyasd/neighbourhoods-for-cnns-and-gnns?cells=cnn_svg%2Csvg"></iframe>
         </div>
       </div>
       <div data-aos="fade-up" data-aos-duration="1000">
