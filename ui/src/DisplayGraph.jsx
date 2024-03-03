@@ -11,9 +11,8 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
   useEffect(() => {    
     if (!graphContainerRef.current) return; // Ensure the ref is attached
     
-    const width = window.innerWidth/1.85;
-    const height = window.innerHeight/1.3;
-
+    const width = window.innerWidth/1.5;
+    const height = window.innerHeight/1;
 
     const zoom = d3.zoom()
       .scaleExtent([0.5, 4])
@@ -157,52 +156,44 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
           return;
         }  // Stop when all nodes have been highlighted
           
-          // Highlight current node
-          node.filter(d => d.label === path[index])
-              .transition()
-              .duration(200) // Adjust time as needed
-              .attr('fill', 'blue')
-              .attr('r', 10);
-  
-          if (index < path.length - 1) {
-              // Find and highlight the link between the current node and the next
-              const currentLink = link.filter(d =>  
-                  (d.source.label === path[index] && d.target.label === path[index + 1]) ||
-                  (d.source.label === path[index + 1] && d.target.label === path[index])
-              );
-              console.log('currentLink source: ', currentLink.datum());
-              
-              let newWeight = currentLink.datum().weight;
-              console.log('target, path, T/F', currentLink.datum().target.label, path[index], currentLink.datum().target.label === path[index]);
-              if (path[index] === currentLink.datum().target.label) {
-                newWeight = 1/newWeight;
-              }
-              console.log('newWeight', newWeight);
-              if (index === 0){
-                setEdgeWeightList(edgeWeightList => [{w: newWeight, s: path[index], t: path[index+1]}]); //add newest edge weight/node label to the edgeWeightList
-              } else {
-                setEdgeWeightList(edgeWeightList => [...edgeWeightList, {w: newWeight, s: path[index], t: path[index+1]}]); //add newest edge weight/node label to the edgeWeightList
-              }
-              setTotalEdgeWeight(totalEdgeWeight => (totalEdgeWeight * newWeight).toFixed(8)); 
+        // Highlight current node
+        node.filter(d => d.label === path[index])
+            .transition()
+            .duration(200) // Adjust time as needed
+            .attr('fill', 'blue')
+            .attr('r', 10);
 
-              
+        if (index < path.length - 1) {
+            // Find and highlight the link between the current node and the next
+            const currentLink = link.filter(d =>  
+                (d.source.label === path[index] && d.target.label === path[index + 1]) ||
+                (d.source.label === path[index + 1] && d.target.label === path[index])
+            );
+            
+            let newWeight = currentLink.datum().weight;
+            if (path[index] === currentLink.datum().target.label) {
+              newWeight = 1/newWeight;
+            }
+            if (index === 0){
+              setEdgeWeightList(edgeWeightList => [{w: newWeight, s: path[index], t: path[index+1]}]); //add newest edge weight/node label to the edgeWeightList
+            } else {
+              setEdgeWeightList(edgeWeightList => [...edgeWeightList, {w: newWeight, s: path[index], t: path[index+1]}]); //add newest edge weight/node label to the edgeWeightList
+            }
+            setTotalEdgeWeight(totalEdgeWeight => (totalEdgeWeight * newWeight).toFixed(8)); 
 
-              currentLink.on('end', null);
-              currentLink.transition()
-              .delay(300) // Delay to ensure the node turns blue first
-              .duration(750) // Adjust time as needed
-              .attr('stroke', 'yellow')
-              .attr('stroke-width', 3)
-              .on('end', () => {
-                //updateEdgeWeights(currentLink, index);
-                animatePath(index + 1)
-                setAnimationRunning(false);
-              }); // Move to the next node after the transition
-
-          }
-
+            currentLink.on('end', null);
+            currentLink.transition()
+            .delay(300) // Delay to ensure the node turns blue first
+            .duration(750) // Adjust time as needed
+            .attr('stroke', 'yellow')
+            .attr('stroke-width', 3)
+            .on('end', () => {
+              //updateEdgeWeights(currentLink, index);
+              animatePath(index + 1)
+              setAnimationRunning(false);
+            }); // Move to the next node after the transition
+        }
       };
-  
       // Start the animation with the first node
       animatePath(0);
     }
@@ -226,39 +217,25 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
 
   return (
   <>
-  
     <div className='flex-box'>
       <div className='graph' ref={graphContainerRef} />
         <div className='console-container'>
           <div className='logs'>
             {edgeWeightList.map((obj, index) => (
-              // (index === 0) ? (
-              //   <></>
-              // ) : (
-              //   <div className='console-line' key={index}>Exchange Rate of {obj.s}/{obj.t}: {obj.w}</div>
-              // )
               <div className='console-line' key={index}>Exchange Rate of {obj.s}/{obj.t}: {obj.w}</div>
-
             ))}
-        </div>
-      
+        </div>  
         <div className='running-total'>
           {(totalEdgeWeight !== 1) ? (
-            
-            
-            
             <>Net Exchange Rate: {totalEdgeWeight}</>
           ) : (
             <>Press 'Find Optimal Path' to view the output of the model</>
           )}
-        </div>
-      
+        </div> 
       </div>
     </div>
-
   </>
   );
 };
 
 export default DisplayGraph;
-

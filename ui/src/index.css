@@ -401,6 +401,10 @@ iframe {
   filter: grayscale(100%) invert(100%);
 }
 
+.demo {
+  font-size: 20px;
+}
+
 @media (prefers-color-scheme: light) {
 
   body {
