@@ -13,3 +13,8 @@
 .text {
   padding: 0px;
 }
+
+.description{
+  flex: auto;
+  width: 85%;
+}

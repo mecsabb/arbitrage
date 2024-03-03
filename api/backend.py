@@ -50,25 +50,7 @@ def arbitrage_path(edge_index, edge_attr, x, ea):
     
     path = path[path.index(path[-1]):]
     
-    # # check path len
-    # actions = [torch.tensor(a) for a in zip(path, path[1:])]
-    # print(actions)
-    # edge_list = [tuple(edge) for edge in edge_index.t().tolist()]
-    # weights = []
-    # for edge in torch.stack(actions).tolist():
-    #     print('edge:', edge)
-    #     if tuple(edge) in edge_list:
-    #         print('yes')
-    #         edge_idx = edge_list.index(tuple(edge))
-    #         weights.append(edge_attr[edge_idx])
-    # weight_tensor = torch.stack(weights)
-    # arb = weight_tensor.prod().item()
-    # if arb < 1:
-    #     path = arbitrage_path(edge_index, edge_attr, x, ea)
-
     return path
-    # return ['XBT', 'MATIC', 'USDT', 'LTC', 'ETH', 'KAVA']
-    # return [1, 3, 5]
 
 def get_model_score(graph):
     return graph
@@ -88,7 +70,6 @@ def process_data():
         x_arr = []
 
         for link in graph_data[0]:
-            # print(link)
             tensor_arr[0].append(int(link['source']['id'])-1)
             tensor_arr[1].append(int(link['target']['id'])-1)
             # edge_weights.append(math.log(float(link['weight'])+0.001))
@@ -96,7 +77,6 @@ def process_data():
             ea.append([float(link['weight'])])
 
         for link in graph_data[0]:
-            # print(link)
             tensor_arr[0].append(int(link['target']['id'])-1)
             tensor_arr[1].append(int(link['source']['id'])-1)
             # edge_weights.append(math.log(1/(float(link['weight'])+0.1)+0.1))
