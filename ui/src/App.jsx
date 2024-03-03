@@ -86,8 +86,8 @@ function App() {
             <p>This study, conducted by a group of 7 undergraduate students at Queen's University, presents a novel approach to finding optimal arbitrage paths in cryptocurrency exchanges using reinforcement learning techniques inspired by DeepMind's AlphaGo Zero. By reframing the problem as a Markov Decision Process and leveraging Monte Carlo Tree Search with a Graph Neural Network, we demonstrate promising convergence towards optimal solutions. Despite computational constraints, our model outperforms random strategies and exhibits significant speed gains compared to traditional methods like Depth First Search. Further research avenues include exploring different GNN architectures and training on specialized currency market graphs before considering deployment in live trading scenarios.</p>
             <div className="card">
                 <a href="/kraken-test">
-                  <button>
-                    Generate Optimal Path
+                  <button className='demo'>
+                    Check out the live demo!
                   </button>
                 </a>
             </div>

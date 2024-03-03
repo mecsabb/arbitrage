@@ -11,8 +11,8 @@ const DisplayGraph = ({ nodes, links, path, showPath, animationRunning, setAnima
   useEffect(() => {    
     if (!graphContainerRef.current) return; // Ensure the ref is attached
     
-    const width = window.innerWidth/1.85;
-    const height = window.innerHeight/1.3;
+    const width = window.innerWidth/1.5;
+    const height = window.innerHeight/1;
 
 
     const zoom = d3.zoom()
